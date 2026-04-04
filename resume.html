@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이력서 - 임형준</title>
+    <meta name="description" content="임형준의 이력서 - Audio Engineer & Music Producer">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        .resume-container {
+            max-width: 1200px;
+            margin: 120px auto 60px;
+            padding: 0 20px;
+        }
+
+        .resume-header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 0;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .resume-name {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 48px;
+            font-weight: 900;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            letter-spacing: 0.05em;
+        }
+
+        .resume-title {
+            font-size: 20px;
+            color: #666;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+
+        .section {
+            margin-bottom: 60px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .loading-message i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .resume-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+        }
+
+        .resume-item[data-order="101"] {
+            margin-top: 30px;
+        }
+
+        .resume-item:last-child {
+            border-bottom: none;
+        }
+
+        .resume-item.featured {
+            background: none;
+            padding-left: 0;
+            border-left: none;
+            margin-left: 0;
+            padding-right: 0;
+        }
+
+        .item-left {
+            flex: 0 0 180px;
+            text-align: right;
+            padding-right: 15px;
+            border-right: 2px solid #eee;
+        }
+
+        .item-right {
+            flex: 1;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+        
+        /* 학력 카테고리는 무조건 한 줄로 */
+        .category-education .item-right {
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a1a;
+            flex-shrink: 0;
+        }
+
+        .item-subtitle {
+            font-size: 14px;
+            color: #555;
+            flex-shrink: 0;
+        }
+
+        .item-date {
+            font-size: 13px;
+            color: #666;
+            flex-shrink: 0;
+        }
+
+        .item-description {
+            font-size: 14px;
+            color: #888;
+            flex-basis: 100%;
+            margin-top: 4px;
+        }
+
+        .featured-badge {
+            display: none;
+            background: var(--accent-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin: 40px 0;
+        }
+
+        .empty-message i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        .empty-message h3 {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .empty-message p {
+            font-size: 15px;
+            color: #999;
+        }
+
+        .empty-message a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .empty-message a:hover {
+            background: #c39562;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .resume-container {
+                margin-top: 100px;
+                padding: 0 15px;
+            }
+
+            .resume-name {
+                font-size: 36px;
+            }
+
+            .resume-title {
+                font-size: 16px;
+                line-height: 1.6;
+                word-break: keep-all;
+            }
+
+            .section {
+                padding: 25px 20px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            /* 🔧 모바일에서 Resume 아이템 세로 배치 */
+            .resume-item {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .item-left {
+                flex: none;
+                width: 100%;
+                text-align: left;
+                padding-right: 0;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 8px;
+                margin-bottom: 8px;
+            }
+
+            .item-right {
+                flex: none;
+                width: 100%;
+                flex-wrap: wrap !important;
+                gap: 8px;
+            }
+
+            .item-title {
+                font-size: 15px;
+                width: 100%;
+            }
+
+            .item-subtitle {
+                font-size: 14px;
+                width: 100%;
+            }
+
+            .item-date {
+                font-size: 13px;
+                width: 100%;
+            }
+
+            .item-description {
+                font-size: 13px;
+                width: 100%;
+                word-break: keep-all;
+                line-height: 1.6;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <a href="index.html" style="color: white; font-size: 20px; text-decoration: none; display: block; padding: 10px 0;">
+                <i class="fas fa-home"></i>
+            </a>
+            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; flex: 1; padding-left: 20px;">
+                <a href="index.html" style="color: white; font-size: 12px; text-decoration: none; letter-spacing: 0.05em; white-space: nowrap;">Home</a>
+                <a href="index.html#about" style="color: white; font-size: 12px; text-decoration: none; letter-spacing: 0.05em; white-space: nowrap;">About</a>
+                <a href="index.html#expertise" style="color: white; font-size: 12px; text-decoration: none; letter-spacing: 0.05em; white-space: nowrap;">Expertise</a>
+                <a href="index.html#gallery" style="color: white; font-size: 12px; text-decoration: none; letter-spacing: 0.05em; white-space: nowrap;">Gallery</a>
+                <a href="index.html#publications" style="color: white; font-size: 12px; text-decoration: none; letter-spacing: 0.05em; white-space: nowrap;">Publications</a>
+                <a href="resume.html" style="color: white; font-size: 12px; text-decoration: none; letter-spacing: 0.05em; white-space: nowrap;">Resume</a>
+                <a href="board.html" style="color: white; font-size: 12px; text-decoration: none; letter-spacing: 0.05em; white-space: nowrap;">Board</a>
+                <a href="index.html#contact" style="color: white; font-size: 12px; text-decoration: none; letter-spacing: 0.05em; white-space: nowrap;">Contact</a>
+                <a href="admin-simple.html" style="color: white; font-size: 12px; text-decoration: none; letter-spacing: 0.05em; white-space: nowrap;"><i class="fas fa-cog"></i> Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Resume Container -->
+    <div class="resume-container">
+        <div class="resume-header">
+            <h1 class="resume-name">임형준</h1>
+            <p class="resume-title">음악학 박사 | Dolby ATMOS & Pro Tools 마스터 트레이너</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="loading-message">
+            <i class="fas fa-spinner"></i>
+            <p>이력서 데이터를 불러오는 중...</p>
+        </div>
+
+        <!-- Resume Content (Dynamically Loaded) -->
+        <div id="resumeContent" style="display: none;"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 임형준 Sound Engineer & Producer, Educator. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Category names mapping
+        const CATEGORY_NAMES = {
+            'education': { title: '학력', icon: 'fa-graduation-cap' },
+            'certification': { title: '국제공인 자격증', icon: 'fa-certificate' },
+            'experience': { title: '사회경력', icon: 'fa-briefcase' },
+            'book': { title: '저서', icon: 'fa-book' },
+            'paper': { title: '논문', icon: 'fa-file-alt' },
+            'project': { title: '주요 정부사업 및 프로젝트', icon: 'fa-tasks' },
+            'workshop': { title: '음향과정 교육 워크샵', icon: 'fa-chalkboard-teacher' },
+            'lecture': { title: '그 외 특강', icon: 'fa-microphone-alt' },
+            'evaluation': { title: '전문가 심의 및 평가활동', icon: 'fa-gavel' },
+            'ncs': { title: 'NCS 개발 및 심의, 교육경력', icon: 'fa-clipboard-check' }
+        };
+
+        // Load resume data from API
+        async function loadResumeData() {
+            try {
+                console.log('📥 Loading resume data...');
+                const response = await fetch('tables/resume?limit=200&sort=order');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Resume data loaded:', data);
+                
+                const items = data.data || [];
+                
+                // Hide loading, show content
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('resumeContent').style.display = 'block';
+                
+                if (items.length === 0) {
+                    renderEmptyState();
+                } else {
+                    renderResumeData(items);
+                }
+            } catch (error) {
+                console.error('❌ Error loading resume data:', error);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('resumeContent').style.display = 'block';
+                renderErrorState(error);
+            }
+        }
+
+        function renderResumeData(items) {
+            // Group by category
+            const grouped = {};
+            items.forEach(item => {
+                if (!grouped[item.category]) {
+                    grouped[item.category] = [];
+                }
+                grouped[item.category].push(item);
+            });
+
+            // Sort each category by order
+            Object.keys(grouped).forEach(category => {
+                grouped[category].sort((a, b) => (a.order || 0) - (b.order || 0));
+            });
+
+            // Render in order
+            const categoryOrder = ['education', 'certification', 'experience', 'book', 'paper', 'project', 'workshop', 'lecture', 'evaluation', 'ncs'];
+            const container = document.getElementById('resumeContent');
+            container.innerHTML = '';
+
+            categoryOrder.forEach(category => {
+                if (grouped[category] && grouped[category].length > 0) {
+                    const section = renderCategorySection(category, grouped[category]);
+                    container.appendChild(section);
+                }
+            });
+
+            // Reinitialize AOS for new content
+            AOS.refresh();
+        }
+
+        function renderCategorySection(category, items) {
+            const categoryInfo = CATEGORY_NAMES[category] || { title: category, icon: 'fa-folder' };
+            
+            const section = document.createElement('div');
+            section.className = 'section category-section category-' + category;
+            section.setAttribute('data-aos', 'fade-up');
+            
+            section.innerHTML = `
+                <h2 class="section-title">
+                    ${categoryInfo.title}
+                </h2>
+                <div class="category-items"></div>
+            `;
+            
+            const itemsContainer = section.querySelector('.category-items');
+            
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'resume-item' + (item.is_featured ? ' featured' : '');
+                if (item.order) {
+                    itemDiv.setAttribute('data-order', item.order);
+                }
+                
+                let leftHTML = '';
+                let rightHTML = '';
+                
+                // Left side: Date
+                if (item.date) {
+                    leftHTML = `<div class="item-date">${item.date}</div>`;
+                }
+                
+                // Right side: Title, Subtitle, Description
+                rightHTML += `<div class="item-title">${item.title || '제목 없음'}</div>`;
+                
+                if (item.subtitle) {
+                    rightHTML += `<div class="item-subtitle">${item.subtitle}</div>`;
+                }
+                
+                if (item.description) {
+                    rightHTML += `<div class="item-description">${item.description}</div>`;
+                }
+                
+                let html = `
+                    <div class="item-left">${leftHTML}</div>
+                    <div class="item-right">${rightHTML}</div>
+                `;
+                
+                itemDiv.innerHTML = html;
+                itemsContainer.appendChild(itemDiv);
+            });
+            
+            return section;
+        }
+
+        function renderEmptyState() {
+            const container = document.getElementById('resumeContent');
+            container.innerHTML = `
+                <div class="empty-message">
+                    <i class="fas fa-inbox"></i>
+                    <h3>이력서 데이터가 없습니다</h3>
+                    <p>관리자 페이지에서 이력서 항목을 추가해주세요.</p>
+                    <a href="admin-simple.html">
+                        <i class="fas fa-plus-circle"></i> 관리자 페이지로 이동
+                    </a>
+                </div>
+            `;
+        }
+
+        function renderErrorState(error) {
+            const container = document.getElementById('resumeContent');
+            container.innerHTML = `
+                <div class="empty-message">
+                    <i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i>
+                    <h3>데이터 로드 오류</h3>
+                    <p>이력서 데이터를 불러오는 중 오류가 발생했습니다.</p>
+                    <p style="font-size: 13px; color: #999; margin-top: 10px;">${error.message}</p>
+                    <a href="javascript:location.reload()">
+                        <i class="fas fa-sync-alt"></i> 새로고침
+                    </a>
+                </div>
+            `;
+        }
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadResumeData();
+        });
+    </script>
+</body>
+</html>

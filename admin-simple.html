@@ -1,0 +1,2837 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Admin - 임형준</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { margin-bottom: 30px; color: #333; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .tab { padding: 12px 24px; background: white; border: none; cursor: pointer; border-radius: 6px; font-size: 14px; }
+        .tab.active { background: #d4a574; color: white; }
+        .section { display: none; background: white; padding: 30px; border-radius: 12px; }
+        .section.active { display: block; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 14px; }
+        textarea { min-height: 120px; resize: vertical; }
+        .btn { padding: 12px 24px; background: #d4a574; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; margin-right: 10px; }
+        .btn:hover { background: #c49463; }
+        .btn-secondary { background: #666; }
+        .btn-danger { background: #dc3545; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 6px; display: none; }
+        .alert.show { display: block; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .items { display: block; margin-top: 30px; }
+        .item { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #e5e5e5; }
+        .item h3 { margin-bottom: 10px; font-size: 16px; color: #333; }
+        .item p { font-size: 13px; color: #666; margin-bottom: 8px; }
+        .item .actions { margin-top: 10px; }
+        .upload-area { border: 2px dashed #d4a574; padding: 40px; text-align: center; border-radius: 8px; cursor: pointer; background: #fafafa; margin-bottom: 20px; transition: all 0.3s; }
+        .upload-area:hover { background: #fff8f0; border-color: #c49463; }
+        #fileInput { display: none; }
+        .preview { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
+        .preview-item { position: relative; }
+        .preview img { width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 2px solid #e5e5e5; }
+        .preview-remove { position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 12px; }
+        .debug { background: #fff3cd; padding: 10px; margin: 10px 0; border-radius: 6px; font-size: 12px; font-family: monospace; }
+        .progress-bar { position: fixed; top: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; padding: 15px; text-align: center; z-index: 9999; display: none; font-size: 16px; }
+        .progress-bar.show { display: block; }
+        /* 🔐 Admin 비밀번호 보호 레이어 */
+        #authOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        #authBox {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        #authBox h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        #authBox input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        #authBox button {
+            width: 100%;
+            padding: 15px;
+            background: #d4a574;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        #authBox button:hover {
+            background: #c49463;
+        }
+        #authError {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        .auth-hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 🔐 Admin 비밀번호 보호 -->
+    <div id="authOverlay">
+        <div id="authBox">
+            <h2>🔐 Admin 로그인</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">관리자 페이지 접근을 위해 비밀번호를 입력하세요</p>
+            <input type="password" id="adminPassword" placeholder="비밀번호 입력" onkeypress="if(event.key==='Enter') checkAdminPassword()">
+            <button onclick="checkAdminPassword()">로그인</button>
+            <div id="authError">❌ 비밀번호가 올바르지 않습니다</div>
+        </div>
+    </div>
+
+    <div id="progressBar" class="progress-bar">
+        <i class="fas fa-spinner fa-spin"></i> <span id="progressText">업로드 중...</span>
+    </div>
+    <div class="container" class="auth-hidden">
+        <h1><i class="fas fa-cog"></i> Simple Admin Panel</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('gallery')">갤러리</button>
+            <button class="tab" onclick="showTab('profile')">프로필 관리</button>
+            <button class="tab" onclick="showTab('aboutEducation')">About Me 학력</button>
+            <button class="tab" onclick="showTab('expertise')">Expertise 관리</button>
+            <button class="tab" onclick="showTab('resumeHeader')">Resume 헤더</button>
+            <button class="tab" onclick="showTab('publications')">Publications & Media</button>
+            <button class="tab" onclick="showTab('resume')">이력서</button>
+            <button class="tab" onclick="showTab('board')">게시판</button>
+            <a href="index.html" style="padding: 12px 24px; background: #666; color: white; text-decoration: none; border-radius: 6px; display: inline-block;">사이트 보기</a>
+        </div>
+
+        <div id="alertSuccess" class="alert alert-success"></div>
+        <div id="alertError" class="alert alert-error"></div>
+        <div id="debug" class="debug" style="display: none;"></div>
+
+        <!-- Gallery Section -->
+        <div id="gallery" class="section active">
+            <h2 style="margin-bottom: 20px;">갤러리 이미지 관리</h2>
+            
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                <p style="font-size: 16px; margin-bottom: 5px;">클릭하여 이미지 선택</p>
+                <p style="font-size: 12px; color: #999;">또는 이미지를 드래그앤드롭</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" multiple>
+            
+            <div id="preview" class="preview"></div>
+
+            <div class="form-group">
+                <label>제목 *</label>
+                <input type="text" id="title" placeholder="예: Studio 환경 1">
+            </div>
+
+            <div class="form-group">
+                <label>카테고리 *</label>
+                <select id="category">
+                    <option value="">선택하세요</option>
+                    <option value="studio">Sound Production (레코딩 믹싱 프로듀싱)</option>
+                    <option value="education">Education (교육 & 세미나)</option>
+                    <option value="work">Work & People (일과 사람들)</option>
+                    <option value="life">Life (좋아하는 것)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>설명</label>
+                <textarea id="description" placeholder="이미지에 대한 설명 (선택사항)"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>순서 (숫자가 작을수록 먼저 표시됩니다)</label>
+                <select id="order">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                </select>
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">💡 1이 가장 앞에 표시됩니다. 같은 순서 선택 시 기존 항목이 자동으로 뒤로 밀립니다.</small>
+            </div>
+
+            <div class="form-group">
+                <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="featured" style="width: auto;">
+                    <span>대표 이미지로 설정 (카테고리 메인에 표시)</span>
+                </label>
+            </div>
+
+            <button class="btn" onclick="saveGallery()" id="saveBtn">
+                <i class="fas fa-save"></i> <span id="saveBtnText">저장</span>
+            </button>
+            <button class="btn btn-secondary" onclick="resetGallery()">
+                <i class="fas fa-times"></i> 취소
+            </button>
+            <p id="editMode" style="display: none; color: #d4a574; font-weight: bold; margin-top: 10px;">✏️ 수정 모드: 이미지를 다시 선택하지 않으면 기존 이미지가 유지됩니다.</p>
+
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e5e5;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">기존 이미지 (총 <span id="galleryCount">0</span>개)</h3>
+                <button class="btn btn-secondary" onclick="autoReorderGallery()" style="font-size: 14px; padding: 10px 20px;">
+                    <i class="fas fa-sort-numeric-down"></i> 순서 자동 정렬 (1, 2, 3...)
+                </button>
+            </div>
+            <div id="galleryItems" class="items"></div>
+        </div>
+
+        <!-- About Me Education Section -->
+        <div id="aboutEducation" class="section">
+            <h2 style="margin-bottom: 20px;">About Me 학력 관리</h2>
+            <p style="color: #666; margin-bottom: 30px;">메인 페이지 About Me 섹션의 학력 정보를 관리합니다. (Resume 학력과 별도 관리)</p>
+
+            <div class="form-group">
+                <label>학력 1</label>
+                <input type="text" id="edu1" placeholder="예: 세종대학교 일반대학원 음악학과 실용음악전공 [음악학 박사]">
+            </div>
+
+            <div class="form-group">
+                <label>학력 2</label>
+                <input type="text" id="edu2" placeholder="예: 추계예술대 문화예술대학원 컨템포러리뮤직학과 뮤직프로듀싱 전공 [실용음악학 석사]">
+            </div>
+
+            <div class="form-group">
+                <label>학력 3</label>
+                <input type="text" id="edu3" placeholder="예: Diploma, SAE (School of Audio Engineering), Sydney, Australia">
+            </div>
+
+            <div class="form-group">
+                <label>학력 4</label>
+                <input type="text" id="edu4" placeholder="예: Advanced Certificate, SAE, Sydney, Australia">
+            </div>
+
+            <div class="form-group">
+                <label>학력 5</label>
+                <input type="text" id="edu5" placeholder="예: Certificate IV, JMC Audio Engineering Academy, Sydney, Australia">
+            </div>
+
+            <button class="btn" onclick="saveAboutEducation()">
+                <i class="fas fa-save"></i> 학력 저장
+            </button>
+            <button class="btn btn-secondary" onclick="loadAboutEducation()">
+                <i class="fas fa-sync-alt"></i> 현재 데이터 불러오기
+            </button>
+
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e5e5;">
+
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #d4a574;">
+                <h4 style="margin-bottom: 10px; color: #333;">💡 사용 팁</h4>
+                <ul style="color: #666; font-size: 14px; line-height: 1.8;">
+                    <li>학위는 대괄호 [ ] 안에 입력하세요 (예: [음악학 박사])</li>
+                    <li>빈 칸으로 남기면 해당 항목이 표시되지 않습니다</li>
+                    <li>저장 후 메인 페이지를 새로고침하면 바로 반영됩니다</li>
+                    <li>Resume 페이지의 학력과는 별도로 관리됩니다</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Expertise Section -->
+        <div id="expertise" class="section">
+            <h2 style="margin-bottom: 20px;">Expertise 관리 (전문 분야 카드)</h2>
+            <p style="color: #666; margin-bottom: 30px;">메인 페이지의 Expertise 섹션에 표시될 전문 분야 카드를 관리합니다.</p>
+
+            <div class="form-group">
+                <label>제목 * (예: Pro Tools, Dolby ATMOS)</label>
+                <input type="text" id="expertiseTitle" placeholder="전문 분야 제목">
+            </div>
+
+            <div class="form-group">
+                <label>아이콘 * (Font Awesome 클래스, 예: fa-headphones)</label>
+                <input type="text" id="expertiseIcon" placeholder="fa-headphones">
+                <small style="color: #999;">Font Awesome 아이콘: <a href="https://fontawesome.com/icons" target="_blank">https://fontawesome.com/icons</a></small>
+            </div>
+
+            <div class="form-group">
+                <label>설명</label>
+                <textarea id="expertiseDescription" rows="3" placeholder="전문 분야 설명"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>태그 (쉼표로 구분, 예: Recording, Mixing, Mastering)</label>
+                <input type="text" id="expertiseTags" placeholder="Recording, Mixing, Mastering">
+            </div>
+
+            <div class="form-group">
+                <label>순서 (현재 항목 개수에 따라 선택)</label>
+                <select id="expertiseOrder">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+                <small style="color: #999; display: block; margin-top: 5px;">💡 같은 순서를 선택하면 기존 항목이 자동으로 뒤로 밀립니다</small>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="expertiseFeatured" style="width: auto; margin-right: 8px;">
+                    메인 페이지에 표시
+                </label>
+            </div>
+
+            <div id="expertiseEditMode" style="display: none; background: #fff3cd; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                ✏️ 수정 모드
+                <button onclick="cancelEditExpertise()" style="float: right; background: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">취소</button>
+            </div>
+
+            <button class="btn" onclick="saveExpertise()" id="saveExpertiseBtn">
+                <i class="fas fa-save"></i> <span id="saveExpertiseBtnText">저장</span>
+            </button>
+
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e5e5;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">기존 Expertise (총 <span id="expertiseCount">0</span>개)</h3>
+                <button class="btn btn-secondary" onclick="autoReorderExpertise()" style="font-size: 14px; padding: 10px 20px;">
+                    <i class="fas fa-sort-numeric-down"></i> 순서 자동 정렬 (1, 2, 3...)
+                </button>
+            </div>
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+                <strong>💡 순서 자동 정렬 버튼:</strong> 현재 표시 순서대로 1, 2, 3... 으로 자동 재정렬합니다. (중복 순서 해결)
+            </div>
+            <div id="expertiseItems" class="items"></div>
+        </div>
+
+        <!-- Resume Header Section -->
+        <div id="resumeHeader" class="section">
+            <h2 style="margin-bottom: 20px;">Resume 헤더 관리</h2>
+            <p style="color: #666; margin-bottom: 30px;">Resume 페이지 상단의 이름, 직함, 주요 기술 스택을 관리합니다.</p>
+
+            <div class="form-group">
+                <label>이름 *</label>
+                <input type="text" id="resumeHeaderName" placeholder="임형준">
+            </div>
+
+            <div class="form-group">
+                <label>직함 *</label>
+                <input type="text" id="resumeHeaderTitle" placeholder="음악학 박사 | Dolby ATMOS & Pro Tools 마스터 트레이너">
+            </div>
+
+            <div class="form-group">
+                <label>왼쪽 스킬 (쉼표로 구분)</label>
+                <input type="text" id="resumeHeaderSkillsLeft" placeholder="Dolby ATMOS, Cubase, Recording">
+                <small style="color: #999;">Resume 페이지 왼쪽 컬럼에 표시됩니다</small>
+            </div>
+
+            <div class="form-group">
+                <label>오른쪽 스킬 (쉼표로 구분)</label>
+                <input type="text" id="resumeHeaderSkillsRight" placeholder="Pro Tools, Dante Network, Mixing">
+                <small style="color: #999;">Resume 페이지 오른쪽 컬럼에 표시됩니다</small>
+            </div>
+
+            <button class="btn" onclick="saveResumeHeader()">
+                <i class="fas fa-save"></i> 저장
+            </button>
+
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e5e5;">
+
+            <div id="resumeHeaderCurrent" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                <h4 style="margin-bottom: 15px;">현재 설정</h4>
+                <p style="color: #666;">데이터를 불러오는 중...</p>
+            </div>
+        </div>
+
+        <!-- Profile Section (NEW) -->
+        <div id="profile" class="section">
+            <h2 style="margin-bottom: 20px;">프로필 관리 (Hero & About Me)</h2>
+            <p style="color: #666; margin-bottom: 30px;">메인 페이지의 Hero 배경, 제목, About Me 이미지 및 텍스트를 수정할 수 있습니다.</p>
+
+            <h3 style="margin: 30px 0 15px 0; border-bottom: 2px solid #d4a574; padding-bottom: 10px;">🖼️ Hero Section</h3>
+            
+            <div class="upload-area" id="heroUploadArea">
+                <i class="fas fa-image" style="font-size: 36px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                <p style="font-size: 14px;">Hero 배경 이미지 선택</p>
+            </div>
+            <input type="file" id="heroFileInput" accept="image/*">
+            <div id="heroPreview" class="preview"></div>
+
+            <div class="form-group">
+                <label>Hero 제목</label>
+                <input type="text" id="heroTitle" placeholder="예: 임형준">
+            </div>
+
+            <div class="form-group">
+                <label>Hero 부제목</label>
+                <input type="text" id="heroSubtitle" placeholder="예: Audio Engineer & Music Producer">
+            </div>
+
+            <h3 style="margin: 40px 0 15px 0; border-bottom: 2px solid #d4a574; padding-bottom: 10px;">👤 About Me Section</h3>
+            
+            <div class="upload-area" id="aboutUploadArea">
+                <i class="fas fa-user-circle" style="font-size: 36px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                <p style="font-size: 14px;">About Me 프로필 이미지 선택</p>
+            </div>
+            <input type="file" id="aboutFileInput" accept="image/*">
+            <div id="aboutPreview" class="preview"></div>
+
+            <div class="form-group">
+                <label>프로필 이름</label>
+                <input type="text" id="aboutName" placeholder="예: 임형준">
+            </div>
+
+            <div class="form-group">
+                <label>소개글 (HTML 지원)</label>
+                <textarea id="aboutBio" style="min-height: 200px;" placeholder="<p>음악학 박사, Dolby ATMOS & Pro Tools 마스터 트레이너</p>"></textarea>
+            </div>
+
+            <button class="btn" onclick="saveProfile()">
+                <i class="fas fa-save"></i> 프로필 저장
+            </button>
+        </div>
+
+        <!-- Publications Section -->
+        <div id="publications" class="section">
+            <h2 style="margin-bottom: 20px;">Publications & Media 관리</h2>
+            <p style="color: #666; margin-bottom: 30px;">논문, 전문서적, 기사, 미디어 등을 관리할 수 있습니다.</p>
+
+            <div class="upload-area" id="pubUploadArea">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                <p style="font-size: 16px; margin-bottom: 5px;">클릭하여 이미지 선택</p>
+                <p style="font-size: 12px; color: #999;">또는 이미지를 드래그앤드롭 (다중 선택 가능)</p>
+            </div>
+            <input type="file" id="pubFileInput" accept="image/*" multiple>
+            <div id="pubPreview" class="preview"></div>
+
+            <div class="form-group">
+                <label>카테고리 *</label>
+                <select id="pubCategory">
+                    <option value="">선택하세요</option>
+                    <option value="thesis">논문 & 전문서적</option>
+                    <option value="article">기사 & 미디어</option>
+                    <option value="other">기타</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>제목 *</label>
+                <input type="text" id="pubTitle" placeholder="예: 인공지능 기술발전에 따른 음악산업 실태 연구">
+            </div>
+
+            <div class="form-group">
+                <label>설명</label>
+                <textarea id="pubDescription" placeholder="간단한 설명을 입력하세요"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>날짜</label>
+                <input type="text" id="pubDate" placeholder="예: 2024.03">
+            </div>
+
+            <div class="form-group">
+                <label>링크 (URL)</label>
+                <input type="text" id="pubLink" placeholder="https://...">
+            </div>
+
+            <div class="form-group">
+                <label>순서 (숫자가 작을수록 먼저 표시됩니다)</label>
+                <select id="pubOrder">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                </select>
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">💡 같은 순서 선택 시 기존 항목이 자동으로 뒤로 밀립니다.</small>
+            </div>
+
+            <div class="form-group">
+                <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="pubFeatured" style="width: auto;">
+                    <span>대표 항목 (Featured)</span>
+                </label>
+            </div>
+
+            <button class="btn" onclick="savePublication()" id="savePubBtn">
+                <i class="fas fa-save"></i> <span id="savePubBtnText">저장</span>
+            </button>
+            <button class="btn btn-secondary" onclick="resetPublication()">
+                <i class="fas fa-times"></i> 취소
+            </button>
+            <p id="pubEditMode" style="display: none; color: #d4a574; font-weight: bold; margin-top: 10px;">✏️ 수정 모드</p>
+
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e5e5;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">기존 Publications (총 <span id="pubCount">0</span>개)</h3>
+                <button class="btn btn-secondary" onclick="autoReorderPublications()" style="font-size: 14px; padding: 10px 20px;">
+                    <i class="fas fa-sort-numeric-down"></i> 순서 자동 정렬 (1, 2, 3...)
+                </button>
+            </div>
+            <div id="pubItems" class="items"></div>
+        </div>
+
+        <!-- Resume Section (NEW) -->
+        <div id="resume" class="section">
+            <h2 style="margin-bottom: 20px;">이력서 관리 (Resume)</h2>
+            <p style="color: #666; margin-bottom: 30px;">경력, 프로젝트, 학력, 자격증, 논문, 수상 등을 관리할 수 있습니다.</p>
+
+            <div class="form-group">
+                <label>카테고리 *</label>
+                <select id="resumeCategory">
+                    <option value="">선택하세요</option>
+                    <option value="education">학력</option>
+                    <option value="certification">국제공인 자격증</option>
+                    <option value="experience">사회경력</option>
+                    <option value="book">저서</option>
+                    <option value="thesis">논문</option>
+                    <option value="project">주요 정부사업 및 프로젝트</option>
+                    <option value="workshop">음향과정 교육 워크샵</option>
+                    <option value="lecture">그 외 특강</option>
+                    <option value="review">전문가 심의 및 평가활동</option>
+                    <option value="ncs">NCS 개발 및 심의, 교육경력</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>제목 *</label>
+                <input type="text" id="resumeTitle" placeholder="예: 세종대학교 일반대학원 음악학과">
+            </div>
+
+            <div class="form-group">
+                <label>부제목 (기관/장소)</label>
+                <input type="text" id="resumeSubtitle" placeholder="예: 음악학 박사 (지식재산권, AI 관련)">
+            </div>
+
+            <div class="form-group">
+                <label>기간/날짜</label>
+                <input type="text" id="resumeDate" placeholder="예: 2024.01 - 현재">
+            </div>
+
+            <div class="form-group">
+                <label>상세 설명 (HTML 지원)</label>
+                <textarea id="resumeDescription" style="min-height: 150px;" placeholder="<p>상세 내용을 입력하세요</p>&#10;<ul>&#10;  <li>항목 1</li>&#10;  <li>항목 2</li>&#10;</ul>"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>순서 (숫자가 작을수록 먼저 표시됩니다)</label>
+                <select id="resumeOrder">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="101">101</option>
+                    <option value="102">102</option>
+                    <option value="103">103</option>
+                    <option value="104">104</option>
+                    <option value="105">105</option>
+                    <option value="110">110</option>
+                    <option value="111">111</option>
+                    <option value="112">112</option>
+                    <option value="113">113</option>
+                </select>
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">💡 100번대는 줄 띄우기용. 같은 순서 선택 시 기존 항목이 자동으로 뒤로 밀립니다.</small>
+            </div>
+
+            <div class="form-group">
+                <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="resumeFeatured" style="width: auto;">
+                    <span>강조 표시 (Highlight)</span>
+                </label>
+            </div>
+
+            <button class="btn" onclick="saveResume()" id="saveResumeBtn">
+                <i class="fas fa-save"></i> <span id="saveResumeBtnText">저장</span>
+            </button>
+            <button class="btn btn-secondary" onclick="resetResume()">
+                <i class="fas fa-times"></i> 취소
+            </button>
+            <p id="resumeEditMode" style="display: none; color: #d4a574; font-weight: bold; margin-top: 10px;">✏️ 수정 모드</p>
+
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e5e5;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">기존 이력 (총 <span id="resumeCount">0</span>개)</h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="btn btn-secondary" onclick="autoReorderResume()" style="font-size: 14px; padding: 8px 16px;">
+                        <i class="fas fa-sort-numeric-down"></i> 순서 자동 정렬
+                    </button>
+                    <label style="font-size: 14px; color: #666;">카테고리 필터:</label>
+                    <select id="resumeFilter" onchange="filterResumeItems()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                        <option value="">전체 보기</option>
+                        <option value="education">학력</option>
+                        <option value="certification">국제공인 자격증</option>
+                        <option value="experience">사회경력</option>
+                        <option value="book">저서</option>
+                        <option value="paper">논문</option>
+                        <option value="project">주요 정부사업 및 프로젝트</option>
+                        <option value="workshop">음향과정 교육 워크샵</option>
+                        <option value="lecture">그 외 특강</option>
+                        <option value="evaluation">전문가 심의 및 평가활동</option>
+                        <option value="ncs">NCS 개발 및 심의, 교육경력</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 일괄 삭제 버튼 -->
+            <div style="margin-bottom: 15px; padding: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; display: none;" id="bulkDeletePanel">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600; color: #856404;">
+                        <i class="fas fa-check-square"></i> <span id="selectedCount">0</span>개 항목 선택됨
+                    </span>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="selectAllResume()" class="btn" style="background: #6c757d; padding: 8px 16px;">
+                            <i class="fas fa-check-double"></i> 전체 선택
+                        </button>
+                        <button onclick="deselectAllResume()" class="btn" style="background: #6c757d; padding: 8px 16px;">
+                            <i class="fas fa-times"></i> 선택 해제
+                        </button>
+                        <button onclick="bulkDeleteResume()" class="btn" style="background: #dc3545; padding: 8px 16px;">
+                            <i class="fas fa-trash-alt"></i> 선택 항목 삭제
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="resumeItems" class="items"></div>
+        </div>
+
+        <!-- Board Section -->
+        <div id="board" class="section">
+            <h2 style="margin-bottom: 20px;">게시판 관리</h2>
+
+            <div class="form-group">
+                <label>제목 *</label>
+                <input type="text" id="boardTitle" placeholder="게시글 제목">
+            </div>
+
+            <div class="form-group">
+                <label>내용 * (HTML 사용 가능)</label>
+                <textarea id="boardContent" style="min-height: 200px;" placeholder="<p>내용을 입력하세요</p>"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>이미지 첨부 (선택사항)</label>
+                <div class="upload-area" id="boardUploadArea" style="padding: 30px; border: 2px dashed #ddd; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s;">
+                    <i class="fas fa-image" style="font-size: 36px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                    <p style="font-size: 14px; margin: 0;">클릭하거나 이미지를 드래그하여 업로드</p>
+                </div>
+                <input type="file" id="boardFileInput" accept="image/*" style="display: none;">
+                <div id="boardPreview" class="preview"></div>
+            </div>
+
+            <div class="form-group">
+                <label>작성자</label>
+                <input type="text" id="boardAuthor" value="관리자">
+            </div>
+
+            <div class="form-group">
+                <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="boardPinned" style="width: auto;">
+                    <span>상단 고정</span>
+                </label>
+            </div>
+
+            <button class="btn" onclick="saveBoard()">
+                <i class="fas fa-save"></i> 게시글 저장
+            </button>
+            <button class="btn btn-secondary" onclick="resetBoard()">
+                <i class="fas fa-times"></i> 취소
+            </button>
+
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e5e5;">
+
+            <h3 style="margin-bottom: 20px;">기존 게시글 (총 <span id="boardCount">0</span>개)</h3>
+            <div id="boardItems" class="items"></div>
+        </div>
+    </div>
+
+    <script>
+        // 🔐 Admin 비밀번호 보호
+        const ADMIN_PASSWORD = 'admin2024'; // ⚠️ 원하는 비밀번호로 변경하세요!
+        
+        function checkAdminPassword() {
+            const input = document.getElementById('adminPassword');
+            const password = input.value;
+            
+            if (password === ADMIN_PASSWORD) {
+                // 비밀번호 맞음 - 세션 저장 & 오버레이 숨김
+                sessionStorage.setItem('adminAuth', 'true');
+                document.getElementById('authOverlay').style.display = 'none';
+                document.querySelector('.container').classList.remove('auth-hidden');
+            } else {
+                // 비밀번호 틀림
+                document.getElementById('authError').style.display = 'block';
+                input.value = '';
+                input.focus();
+            }
+        }
+        
+        // 페이지 로드 시 인증 확인
+        window.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('adminAuth') === 'true') {
+                document.getElementById('authOverlay').style.display = 'none';
+                document.querySelector('.container').classList.remove('auth-hidden');
+            }
+        });
+        
+        let uploadedImages = [];
+        let editingId = null;
+
+        function log(message) {
+            const debug = document.getElementById('debug');
+            debug.style.display = 'block';
+            debug.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+            console.log(message);
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showAlert(type, message) {
+            const alert = type === 'success' ? document.getElementById('alertSuccess') : document.getElementById('alertError');
+            alert.textContent = message;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 5000);
+            log(`Alert: ${type} - ${message}`);
+        }
+
+        // File Upload with better handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadArea.onclick = () => {
+            log('Upload area clicked');
+            fileInput.click();
+        };
+
+        // Drag and drop
+        uploadArea.ondragover = (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#fff8f0';
+        };
+
+        uploadArea.ondragleave = () => {
+            uploadArea.style.background = '#fafafa';
+        };
+
+        uploadArea.ondrop = (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#fafafa';
+            handleFiles(e.dataTransfer.files);
+        };
+
+        fileInput.onchange = (e) => {
+            log('File input changed');
+            handleFiles(e.target.files);
+        };
+
+        function handleFiles(files) {
+            log(`Files selected: ${files.length}`);
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+            uploadedImages = [];
+
+            if (files.length === 0) {
+                log('No files selected');
+                return;
+            }
+
+            [...files].forEach((file, index) => {
+                log(`Processing file: ${file.name}, type: ${file.type}, size: ${file.size} bytes`);
+                if (file.type.startsWith('image/')) {
+                    compressAndLoadImage(file, index);
+                } else {
+                    log(`Skipped non-image file: ${file.type}`);
+                }
+            });
+        }
+
+        function compressAndLoadImage(file, index) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    // 이미지 크기 계산
+                    let width = img.width;
+                    let height = img.height;
+                    const maxSize = 1200; // 최대 크기 제한
+
+                    // 크기 조정
+                    if (width > maxSize || height > maxSize) {
+                        if (width > height) {
+                            height = (height / width) * maxSize;
+                            width = maxSize;
+                        } else {
+                            width = (width / height) * maxSize;
+                            height = maxSize;
+                        }
+                        log(`Image resized: ${img.width}x${img.height} → ${Math.round(width)}x${Math.round(height)}`);
+                    }
+
+                    // Canvas로 압축
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // JPEG로 변환 (품질 0.7)
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    const originalSize = e.target.result.length;
+                    const compressedSize = compressedDataUrl.length;
+                    const reduction = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+                    
+                    log(`Image compressed: ${originalSize} → ${compressedSize} bytes (${reduction}% reduction)`);
+                    
+                    if (compressedSize > 1500000) { // 1.5MB 초과 시 경고
+                        log(`WARNING: Compressed size still large: ${(compressedSize / 1024 / 1024).toFixed(2)}MB`);
+                    }
+
+                    uploadedImages.push(compressedDataUrl);
+
+                    // 미리보기 추가
+                    const preview = document.getElementById('preview');
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.innerHTML = `
+                        <img src="${compressedDataUrl}" alt="${file.name}">
+                        <button class="preview-remove" onclick="removePreview(${index})">×</button>
+                    `;
+                    preview.appendChild(div);
+                };
+                img.onerror = () => {
+                    log(`Error loading image for compression`);
+                };
+                img.src = e.target.result;
+            };
+            reader.onerror = (e) => {
+                log(`Error reading file: ${e}`);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removePreview(index) {
+            uploadedImages.splice(index, 1);
+            const preview = document.getElementById('preview');
+            preview.children[index].remove();
+            log(`Removed preview at index ${index}`);
+        }
+
+        // Save Gallery (NEW - 수정/신규 모두 지원 + 진행률 표시)
+        async function saveGallery() {
+            log('=== saveGallery called ===');
+            
+            const title = document.getElementById('title').value.trim();
+            const category = document.getElementById('category').value;
+            const description = document.getElementById('description').value.trim();
+            const order = parseInt(document.getElementById('order').value) || 1;
+            const featured = document.getElementById('featured').checked;
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            log(`Title: ${title}`);
+            log(`Category: ${category}`);
+            log(`Images count: ${uploadedImages.length}`);
+            log(`Featured: ${featured}`);
+            log(`Editing ID: ${editingId}`);
+
+            if (!title) {
+                showAlert('error', '제목을 입력해주세요.');
+                return;
+            }
+
+            if (!category) {
+                showAlert('error', '카테고리를 선택해주세요.');
+                return;
+            }
+
+            // 수정 모드: 이미지 재업로드 필수 아님
+            if (!editingId && uploadedImages.length === 0) {
+                showAlert('error', '이미지를 선택해주세요.');
+                return;
+            }
+
+            log('Validation passed, starting save...');
+
+            try {
+                // **수정 모드**
+                if (editingId) {
+                    progressBar.classList.add('show');
+                    progressText.textContent = '수정 중...';
+
+                    const updateData = {
+                        title: title,
+                        description: description,
+                        category: category,
+                        order: order,
+                        is_featured: featured
+                    };
+
+                    // 새 이미지가 선택되었다면 교체
+                    if (uploadedImages.length > 0) {
+                        updateData.image_url = uploadedImages[0];
+                        log('New image will replace existing one');
+                    }
+
+                    log(`Updating item ${editingId}...`);
+
+                    const response = await fetch(`tables/gallery/${editingId}`, {
+                        method: 'PATCH',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(updateData)
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`수정 실패: ${errorText}`);
+                    }
+
+                    log('Update successful');
+                    progressBar.classList.remove('show');
+                    showAlert('success', '이미지 정보가 수정되었습니다!');
+                    resetGallery();
+                    loadGalleryItems();
+
+                // **신규 추가 모드**
+                } else {
+                    progressBar.classList.add('show');
+                    let successCount = 0;
+
+                    for (let i = 0; i < uploadedImages.length; i++) {
+                        progressText.textContent = `업로드 중... (${i + 1}/${uploadedImages.length})`;
+
+                        const data = {
+                            title: uploadedImages.length > 1 ? `${title} ${i + 1}` : title,
+                            description: description,
+                            image_url: uploadedImages[i],
+                            category: category,
+                            order: order + i,
+                            is_featured: i === 0 ? featured : false
+                        };
+
+                        log(`Uploading image ${i + 1}/${uploadedImages.length}...`);
+
+                        const response = await fetch('tables/gallery', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(data)
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            log(`Error response: ${errorText}`);
+                            throw new Error(`Upload failed (${i + 1}/${uploadedImages.length}): ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        log(`Upload ${i + 1} successful`);
+                        successCount++;
+                    }
+
+                    progressBar.classList.remove('show');
+                    showAlert('success', `${successCount}개 이미지가 저장되었습니다!`);
+                    resetGallery();
+                    loadGalleryItems();
+                }
+
+            } catch (error) {
+                progressBar.classList.remove('show');
+                log(`ERROR: ${error.message}`);
+                console.error(error);
+                showAlert('error', '저장 실패: ' + error.message);
+            }
+        }
+
+        function resetGallery() {
+            document.getElementById('title').value = '';
+            document.getElementById('category').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('order').value = '1';
+            document.getElementById('featured').checked = false;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('preview').innerHTML = '';
+            uploadedImages = [];
+            editingId = null;
+            document.getElementById('editMode').style.display = 'none';
+            document.getElementById('saveBtnText').textContent = '저장';
+            log('Form reset');
+        }
+
+        // Load Gallery Items (카테고리별 행 레이아웃)
+        async function loadGalleryItems() {
+            log('Loading gallery items...');
+            try {
+                const response = await fetch('tables/gallery?limit=100&sort=order');
+                const data = await response.json();
+                const container = document.getElementById('galleryItems');
+                const countEl = document.getElementById('galleryCount');
+                container.innerHTML = '';
+
+                log(`Loaded ${data.data ? data.data.length : 0} items`);
+
+                if (data.data && data.data.length > 0) {
+                    countEl.textContent = data.data.length;
+                    
+                    // 카테고리 이름 매핑
+                    const categories = {
+                        studio: 'Sound Production',
+                        education: 'Education',
+                        work: 'Work & People',
+                        life: 'Life'
+                    };
+
+                    // 카테고리별로 그룹화
+                    const grouped = {};
+                    data.data.forEach(item => {
+                        if (!grouped[item.category]) {
+                            grouped[item.category] = [];
+                        }
+                        grouped[item.category].push(item);
+                    });
+
+                    // 각 카테고리 렌더링
+                    Object.keys(grouped).forEach(category => {
+                        const categoryDiv = document.createElement('div');
+                        categoryDiv.style.marginBottom = '30px';
+                        categoryDiv.innerHTML = `<h4 style="color: #d4a574; margin-bottom: 15px; font-size: 18px;">${categories[category] || category} (${grouped[category].length}개)</h4>`;
+
+                        // 순서대로 정렬
+                        const sortedItems = grouped[category].sort((a, b) => (a.order || 0) - (b.order || 0));
+                        
+                        sortedItems.forEach((item, index) => {
+                            const div = document.createElement('div');
+                            div.style.borderLeft = item.is_featured ? '4px solid #d4a574' : '4px solid #e5e5e5';
+                            div.style.marginBottom = '10px';
+                            div.style.padding = '12px';
+                            div.style.background = 'white';
+                            div.style.borderRadius = '6px';
+                            
+                            const imgPreview = item.image_url && item.image_url.startsWith('data:') 
+                                ? `<img src="${item.image_url}" style="width: 120px; height: 80px; object-fit: cover; border-radius: 4px; margin-right: 15px;">` 
+                                : '';
+                            
+                            div.innerHTML = `
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    ${imgPreview}
+                                    <div style="flex: 1;">
+                                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                            <strong style="font-size: 15px;">${item.title}</strong>
+                                            ${item.is_featured ? '<span style="background: #d4a574; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">★ Featured</span>' : ''}
+                                            <span style="color: #999; font-size: 13px;">순서: ${item.order}</span>
+                                        </div>
+                                        ${item.description ? `<div style="color: #666; font-size: 13px;">${item.description.substring(0, 100)}${item.description.length > 100 ? '...' : ''}</div>` : ''}
+                                    </div>
+                                    <div style="display: flex; gap: 5px; flex-shrink: 0;">
+                                        <button class="btn-icon" onclick="editGallery('${item.id}')" title="수정">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon btn-danger" onclick="deleteGallery('${item.id}')" title="삭제">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            categoryDiv.appendChild(div);
+                        });
+
+                        container.appendChild(categoryDiv);
+                    });
+                } else {
+                    countEl.textContent = '0';
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">이미지가 없습니다. 위에서 추가해주세요.</p>';
+                }
+            } catch (error) {
+                log(`Error loading gallery: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        async function editGallery(id) {
+            log(`Edit gallery item: ${id}`);
+            try {
+                const response = await fetch(`tables/gallery/${id}`);
+                const item = await response.json();
+                
+                document.getElementById('title').value = item.title;
+                document.getElementById('category').value = item.category;
+                document.getElementById('description').value = item.description || '';
+                document.getElementById('order').value = item.order;
+                document.getElementById('featured').checked = item.is_featured;
+                
+                editingId = id;
+                document.getElementById('editMode').style.display = 'block';
+                document.getElementById('saveBtnText').textContent = '수정 저장';
+                
+                window.scrollTo(0, 0);
+                showAlert('success', '✏️ 수정 모드: 정보를 변경하고 저장하세요. (이미지 재선택 선택사항)');
+            } catch (error) {
+                log(`Error loading item for edit: ${error.message}`);
+                showAlert('error', '항목을 불러올 수 없습니다.');
+            }
+        }
+
+        async function deleteGallery(id) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+            log(`Deleting gallery item: ${id}`);
+            try {
+                await fetch(`tables/gallery/${id}`, { method: 'DELETE' });
+                showAlert('success', '삭제되었습니다.');
+                loadGalleryItems();
+            } catch (error) {
+                log(`Delete error: ${error.message}`);
+                showAlert('error', '삭제 실패');
+            }
+        }
+
+        async function autoReorderGallery() {
+            if (!confirm('현재 표시 순서대로 1, 2, 3... 으로 자동 재정렬하시겠습니까?\n\n⚠️ 기존 순서가 모두 변경됩니다.')) {
+                return;
+            }
+
+            try {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.classList.add('show');
+                document.getElementById('progressText').textContent = '갤러리 순서 자동 정렬 중...';
+
+                const response = await fetch('tables/gallery?limit=100&sort=order');
+                const data = await response.json();
+                const allItems = data.data || [];
+                
+                console.log(`📋 Found ${allItems.length} gallery items to reorder`);
+                
+                for (let i = 0; i < allItems.length; i++) {
+                    const item = allItems[i];
+                    const newOrder = i + 1;
+                    
+                    if (item.order !== newOrder) {
+                        console.log(`  📌 Reordering "${item.title}": ${item.order} → ${newOrder}`);
+                        await fetch(`tables/gallery/${item.id}`, {
+                            method: 'PATCH',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ order: newOrder })
+                        });
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                }
+                
+                progressBar.classList.remove('show');
+                showAlert('success', '갤러리 순서가 자동 정렬되었습니다!');
+                loadGalleryItems();
+            } catch (error) {
+                document.getElementById('progressBar').classList.remove('show');
+                showAlert('error', '자동 정렬 실패: ' + error.message);
+            }
+        }
+
+        // ========================================
+        // PROFILE MANAGEMENT FUNCTIONS (NEW)
+        // ========================================
+        let heroImage = '';
+        let aboutImage = '';
+
+        // Hero image upload
+        document.getElementById('heroUploadArea').addEventListener('click', () => {
+            document.getElementById('heroFileInput').click();
+        });
+
+        document.getElementById('heroFileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                log(`Processing hero image: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+                heroImage = await compressAndPreview(file, 'heroPreview');
+            }
+        });
+
+        // About image upload
+        document.getElementById('aboutUploadArea').addEventListener('click', () => {
+            document.getElementById('aboutFileInput').click();
+        });
+
+        document.getElementById('aboutFileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                log(`Processing about image: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+                aboutImage = await compressAndPreview(file, 'aboutPreview');
+            }
+        });
+
+        // Compress and preview helper
+        async function compressAndPreview(file, previewId) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const maxSize = 1200;
+                        if (width > height && width > maxSize) {
+                            height *= maxSize / width;
+                            width = maxSize;
+                        } else if (height > maxSize) {
+                            width *= maxSize / height;
+                            height = maxSize;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        log(`Image compressed: ${e.target.result.length} → ${compressedDataUrl.length} bytes`);
+
+                        // Show preview
+                        const preview = document.getElementById(previewId);
+                        preview.innerHTML = `<img src="${compressedDataUrl}" style="width: 200px; height: auto; border-radius: 8px; border: 2px solid #d4a574;">`;
+
+                        resolve(compressedDataUrl);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Save Profile
+        async function saveProfile() {
+            log('=== saveProfile called ===');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            const heroTitle = document.getElementById('heroTitle').value.trim();
+            const heroSubtitle = document.getElementById('heroSubtitle').value.trim();
+            const aboutName = document.getElementById('aboutName').value.trim();
+            const aboutBio = document.getElementById('aboutBio').value.trim();
+
+            if (!heroTitle || !aboutName) {
+                showAlert('error', 'Hero 제목과 About 이름은 필수입니다.');
+                return;
+            }
+
+            try {
+                progressBar.classList.add('show');
+                progressText.textContent = '프로필 저장 중...';
+
+                // Check if profile exists
+                const checkResponse = await fetch('tables/profile?limit=1');
+                const checkData = await checkResponse.json();
+
+                const profileData = {
+                    hero_title: heroTitle,
+                    hero_subtitle: heroSubtitle,
+                    about_name: aboutName,
+                    about_bio: aboutBio
+                };
+
+                // Add images only if new ones were selected
+                if (heroImage) profileData.hero_bg_image = heroImage;
+                if (aboutImage) profileData.about_image = aboutImage;
+
+                let response;
+                if (checkData.data && checkData.data.length > 0) {
+                    // UPDATE existing profile
+                    const profileId = checkData.data[0].id;
+                    log(`Updating profile ${profileId}`);
+                    response = await fetch(`tables/profile/${profileId}`, {
+                        method: 'PATCH',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(profileData)
+                    });
+                } else {
+                    // CREATE new profile
+                    log('Creating new profile');
+                    response = await fetch('tables/profile', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(profileData)
+                    });
+                }
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`저장 실패: ${errorText}`);
+                }
+
+                progressBar.classList.remove('show');
+                showAlert('success', '프로필이 저장되었습니다! 메인 페이지를 새로고침하여 확인하세요.');
+                log('Profile saved successfully');
+                
+                // Reset images
+                heroImage = '';
+                aboutImage = '';
+            } catch (error) {
+                progressBar.classList.remove('show');
+                log(`Error: ${error.message}`);
+                showAlert('error', `저장 실패: ${error.message}`);
+            }
+        }
+
+        // Load Profile on page load
+        async function loadProfile() {
+            try {
+                const response = await fetch('tables/profile?limit=1');
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    const profile = data.data[0];
+                    document.getElementById('heroTitle').value = profile.hero_title || '';
+                    document.getElementById('heroSubtitle').value = profile.hero_subtitle || '';
+                    document.getElementById('aboutName').value = profile.about_name || '';
+                    document.getElementById('aboutBio').value = profile.about_bio || '';
+                    
+                    if (profile.hero_bg_image) {
+                        document.getElementById('heroPreview').innerHTML = `<img src="${profile.hero_bg_image}" style="width: 200px; height: auto; border-radius: 8px; border: 2px solid #d4a574;">`;
+                    }
+                    if (profile.about_image) {
+                        document.getElementById('aboutPreview').innerHTML = `<img src="${profile.about_image}" style="width: 200px; height: auto; border-radius: 8px; border: 2px solid #d4a574;">`;
+                    }
+                    
+                    log('Profile loaded successfully');
+                }
+            } catch (error) {
+                log(`Error loading profile: ${error.message}`);
+            }
+        }
+
+        // ========================================
+        // RESUME MANAGEMENT FUNCTIONS (NEW)
+        // ========================================
+        let editingResumeId = null;
+        let allResumeItems = [];
+
+        async function saveResume() {
+            log('=== saveResume called ===');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            const category = document.getElementById('resumeCategory').value;
+            const title = document.getElementById('resumeTitle').value.trim();
+            const subtitle = document.getElementById('resumeSubtitle').value.trim();
+            const date = document.getElementById('resumeDate').value.trim();
+            const description = document.getElementById('resumeDescription').value.trim();
+            const order = parseInt(document.getElementById('resumeOrder').value) || 1;
+            const featured = document.getElementById('resumeFeatured').checked;
+
+            if (!category) {
+                showAlert('error', '카테고리를 선택해주세요.');
+                return;
+            }
+
+            if (!title) {
+                showAlert('error', '제목을 입력해주세요.');
+                return;
+            }
+
+            try {
+                progressBar.classList.add('show');
+                progressText.textContent = editingResumeId ? '수정 중...' : '저장 중...';
+
+                const resumeData = {
+                    category: category,
+                    title: title,
+                    subtitle: subtitle,
+                    date: date,
+                    description: description,
+                    order: order,
+                    is_featured: featured
+                };
+
+                let response;
+                if (editingResumeId) {
+                    // UPDATE
+                    log(`Updating resume item ${editingResumeId}`);
+                    response = await fetch(`tables/resume/${editingResumeId}`, {
+                        method: 'PATCH',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(resumeData)
+                    });
+                } else {
+                    // CREATE
+                    log('Creating new resume item');
+                    response = await fetch('tables/resume', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(resumeData)
+                    });
+                }
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`저장 실패: ${errorText}`);
+                }
+
+                progressBar.classList.remove('show');
+                showAlert('success', editingResumeId ? '이력이 수정되었습니다!' : '이력이 저장되었습니다!');
+                log('Resume saved successfully');
+                
+                resetResume();
+                loadResumeItems();
+            } catch (error) {
+                progressBar.classList.remove('show');
+                log(`Error: ${error.message}`);
+                showAlert('error', `저장 실패: ${error.message}`);
+            }
+        }
+
+        function resetResume() {
+            document.getElementById('resumeCategory').value = '';
+            document.getElementById('resumeTitle').value = '';
+            document.getElementById('resumeSubtitle').value = '';
+            document.getElementById('resumeDate').value = '';
+            document.getElementById('resumeDescription').value = '';
+            document.getElementById('resumeOrder').value = '1';
+            document.getElementById('resumeFeatured').checked = false;
+            editingResumeId = null;
+            document.getElementById('resumeEditMode').style.display = 'none';
+            document.getElementById('saveResumeBtnText').textContent = '저장';
+            log('Resume form reset');
+        }
+
+        async function loadResumeItems() {
+            log('Loading resume items...');
+            try {
+                const response = await fetch('tables/resume?limit=200&sort=order');
+                const data = await response.json();
+                
+                allResumeItems = data.data || [];
+                
+                console.log('========== RESUME DATA LOADED ==========');
+                console.log(`📊 Total items: ${allResumeItems.length}`);
+                console.log('📦 Raw data:', data);
+                
+                // 카테고리별 개수 출력
+                const categoryCounts = {};
+                allResumeItems.forEach(item => {
+                    categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
+                });
+                console.log('📊 Category counts:', categoryCounts);
+                
+                renderResumeItems(allResumeItems);
+            } catch (error) {
+                log(`Error loading resume: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        function filterResumeItems() {
+            const filterValue = document.getElementById('resumeFilter').value;
+            console.log('🔍 Filter selected:', filterValue);
+            console.log('📦 Total items in allResumeItems:', allResumeItems.length);
+            console.log('📊 All categories:', allResumeItems.map(item => item.category));
+            
+            if (filterValue === '') {
+                renderResumeItems(allResumeItems);
+            } else {
+                const filtered = allResumeItems.filter(item => item.category === filterValue);
+                console.log(`✅ Filtered ${filtered.length} items for category: ${filterValue}`);
+                console.log('📝 Filtered items:', filtered);
+                renderResumeItems(filtered);
+            }
+        }
+
+        function renderResumeItems(items) {
+            const container = document.getElementById('resumeItems');
+            const countEl = document.getElementById('resumeCount');
+            container.innerHTML = '';
+
+            console.log('========== RESUME RENDERING DEBUG ==========');
+            console.log(`📊 Total items to render: ${items ? items.length : 0}`);
+            console.log('📦 Full items array:', items);
+            log(`Rendering ${items ? items.length : 0} resume items`);
+
+            if (items && items.length > 0) {
+                // 전체 항목 개수 표시 (필터와 관계없이)
+                countEl.textContent = allResumeItems.length;
+                    
+                    // 카테고리 이름 매핑
+                    const categories = {
+                        education: '학력',
+                        certification: '국제공인 자격증',
+                        experience: '사회경력',
+                        book: '저서',
+                        paper: '논문',
+                        project: '주요 정부사업 및 프로젝트',
+                        workshop: '음향과정 교육 워크샵',
+                        lecture: '그 외 특강',
+                        evaluation: '전문가 심의 및 평가활동',
+                        ncs: 'NCS 개발 및 심의, 교육경력'
+                    };
+
+                    // 카테고리별로 그룹화
+                    const grouped = {};
+                    items.forEach(item => {
+                        if (!grouped[item.category]) {
+                            grouped[item.category] = [];
+                        }
+                        grouped[item.category].push(item);
+                    });
+
+                    // 각 카테고리 렌더링
+                    console.log(`📁 Grouped categories:`, Object.keys(grouped).map(cat => `${cat}: ${grouped[cat].length}개`));
+                    
+                    Object.keys(grouped).forEach(category => {
+                        console.log(`🔹 Rendering category: ${category} (${grouped[category].length} items)`);
+                        
+                        const categoryDiv = document.createElement('div');
+                        categoryDiv.style.marginBottom = '30px';
+                        categoryDiv.innerHTML = `<h4 style="color: #d4a574; margin-bottom: 15px; font-size: 18px;">${categories[category] || category} (${grouped[category].length}개)</h4>`;
+
+                        // 순서대로 정렬하여 렌더링
+                        const sortedItems = grouped[category].sort((a, b) => (a.order || 0) - (b.order || 0));
+                        console.log(`  → Sorted ${category}:`, sortedItems.map(item => `[${item.order}] ${item.title}`));
+                        
+                        sortedItems.forEach((item, index) => {
+                            const div = document.createElement('div');
+                            div.className = 'item';
+                            div.style.borderLeft = item.is_featured ? '4px solid #d4a574' : '4px solid #e5e5e5';
+                            div.style.marginBottom = '10px';
+                            div.style.padding = '12px';
+                            div.style.background = 'white';
+                            div.style.borderRadius = '6px';
+                            
+                            div.innerHTML = `
+                                <div style="display: flex; align-items: flex-start; gap: 15px;">
+                                    <input type="checkbox" class="resume-checkbox" data-id="${item.id}" onchange="updateBulkDeletePanel()" style="width: 20px; height: 20px; cursor: pointer; flex-shrink: 0;">
+                                    <div style="min-width: 40px; text-align: center; color: #d4a574; font-weight: bold; font-size: 16px;">${item.order || index + 1}</div>
+                                    <div style="flex: 1;">
+                                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                            <strong style="font-size: 15px;">${item.title || '제목 없음'}</strong>
+                                            ${item.is_featured ? '<span style="background: #d4a574; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">★ Featured</span>' : ''}
+                                        </div>
+                                        ${item.subtitle ? `<div style="color: #666; font-size: 14px; margin-bottom: 3px;">📍 ${item.subtitle}</div>` : ''}
+                                        ${item.date ? `<div style="color: #999; font-size: 13px; margin-bottom: 3px;">📅 ${item.date}</div>` : ''}
+                                        ${item.description ? `<div style="color: #666; font-size: 13px; margin-top: 8px; line-height: 1.4;">${item.description.substring(0, 150)}${item.description.length > 150 ? '...' : ''}</div>` : ''}
+                                    </div>
+                                    <div style="display: flex; gap: 5px; flex-shrink: 0;">
+                                        <button class="btn-icon" onclick="editResume('${item.id}')" title="수정">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon btn-danger" onclick="deleteResume('${item.id}')" title="삭제">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            categoryDiv.appendChild(div);
+                        });
+
+                        container.appendChild(categoryDiv);
+                        console.log(`✅ Category ${category} rendered successfully`);
+                    });
+                    
+                    console.log('========== RENDERING COMPLETE ==========');
+                } else {
+                    console.log('⚠️ No items to render');
+                    countEl.textContent = '0';
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">이력이 없습니다. 위에서 추가해주세요.</p>';
+                }
+        }
+
+        async function editResume(id) {
+            log(`Edit resume item: ${id}`);
+            try {
+                const response = await fetch(`tables/resume/${id}`);
+                const item = await response.json();
+                
+                document.getElementById('resumeCategory').value = item.category;
+                document.getElementById('resumeTitle').value = item.title;
+                document.getElementById('resumeSubtitle').value = item.subtitle || '';
+                document.getElementById('resumeDate').value = item.date || '';
+                document.getElementById('resumeDescription').value = item.description || '';
+                document.getElementById('resumeOrder').value = item.order;
+                document.getElementById('resumeFeatured').checked = item.is_featured;
+                
+                editingResumeId = id;
+                document.getElementById('resumeEditMode').style.display = 'block';
+                document.getElementById('saveResumeBtnText').textContent = '수정 저장';
+                
+                window.scrollTo(0, 0);
+                showAlert('success', '✏️ 수정 모드: 정보를 변경하고 저장하세요.');
+            } catch (error) {
+                log(`Error loading resume item for edit: ${error.message}`);
+                showAlert('error', '항목을 불러올 수 없습니다.');
+            }
+        }
+
+        async function deleteResume(id) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+            log(`Deleting resume item: ${id}`);
+            try {
+                await fetch(`tables/resume/${id}`, { method: 'DELETE' });
+                showAlert('success', '삭제되었습니다.');
+                loadResumeItems();
+            } catch (error) {
+                log(`Error deleting resume item: ${error.message}`);
+                showAlert('error', '삭제 실패: ' + error.message);
+            }
+        }
+
+        // 일괄 삭제 패널 업데이트
+        function updateBulkDeletePanel() {
+            const checkboxes = document.querySelectorAll('.resume-checkbox:checked');
+            const count = checkboxes.length;
+            const panel = document.getElementById('bulkDeletePanel');
+            const countEl = document.getElementById('selectedCount');
+            
+            if (count > 0) {
+                panel.style.display = 'block';
+                countEl.textContent = count;
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        // 전체 선택
+        function selectAllResume() {
+            const checkboxes = document.querySelectorAll('.resume-checkbox');
+            checkboxes.forEach(cb => cb.checked = true);
+            updateBulkDeletePanel();
+        }
+
+        // 선택 해제
+        function deselectAllResume() {
+            const checkboxes = document.querySelectorAll('.resume-checkbox');
+            checkboxes.forEach(cb => cb.checked = false);
+            updateBulkDeletePanel();
+        }
+
+        // 일괄 삭제
+        async function bulkDeleteResume() {
+            const checkboxes = document.querySelectorAll('.resume-checkbox:checked');
+            const ids = Array.from(checkboxes).map(cb => cb.dataset.id);
+            
+            if (ids.length === 0) {
+                showAlert('error', '삭제할 항목을 선택해주세요.');
+                return;
+            }
+            
+            if (!confirm(`선택한 ${ids.length}개 항목을 정말 삭제하시겠습니까?\n\n⚠️ 이 작업은 되돌릴 수 없습니다!`)) {
+                return;
+            }
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.classList.add('show');
+            progressText.textContent = `삭제 중... (0/${ids.length})`;
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (let i = 0; i < ids.length; i++) {
+                try {
+                    progressText.textContent = `삭제 중... (${i + 1}/${ids.length})`;
+                    await fetch(`tables/resume/${ids[i]}`, { method: 'DELETE' });
+                    successCount++;
+                } catch (error) {
+                    console.error(`Failed to delete ${ids[i]}:`, error);
+                    errorCount++;
+                }
+            }
+            
+            progressBar.classList.remove('show');
+            
+            if (errorCount > 0) {
+                showAlert('error', `삭제 완료: ${successCount}개 성공, ${errorCount}개 실패`);
+            } else {
+                showAlert('success', `${successCount}개 항목이 삭제되었습니다!`);
+            }
+            
+            loadResumeItems();
+            document.getElementById('bulkDeletePanel').style.display = 'none';
+        }
+
+        async function autoReorderResume() {
+            if (!confirm('현재 표시 순서대로 1, 2, 3... 으로 자동 재정렬하시겠습니까?\n\n⚠️ 기존 순서가 모두 변경됩니다.\n💡 카테고리별로 정렬하려면 먼저 필터를 선택하세요.')) {
+                return;
+            }
+
+            try {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.classList.add('show');
+                document.getElementById('progressText').textContent = '이력서 순서 자동 정렬 중...';
+
+                const response = await fetch('tables/resume?limit=300&sort=order');
+                const data = await response.json();
+                const allItems = data.data || [];
+                
+                console.log(`📋 Found ${allItems.length} resume items to reorder`);
+                
+                for (let i = 0; i < allItems.length; i++) {
+                    const item = allItems[i];
+                    const newOrder = i + 1;
+                    
+                    if (item.order !== newOrder) {
+                        console.log(`  📌 Reordering "${item.title}": ${item.order} → ${newOrder}`);
+                        await fetch(`tables/resume/${item.id}`, {
+                            method: 'PATCH',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ order: newOrder })
+                        });
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                }
+                
+                progressBar.classList.remove('show');
+                showAlert('success', '이력서 순서가 자동 정렬되었습니다!');
+                loadResumeItems();
+            } catch (error) {
+                document.getElementById('progressBar').classList.remove('show');
+                showAlert('error', '자동 정렬 실패: ' + error.message);
+            }
+        }
+
+        // ========================================
+        // BOARD FUNCTIONS (NEW - with image support & edit)
+        // ========================================
+        let boardImage = '';
+        let editingBoardId = null;
+
+        // Board image upload
+        const boardUploadArea = document.getElementById('boardUploadArea');
+        
+        // Click to upload
+        boardUploadArea.addEventListener('click', () => {
+            document.getElementById('boardFileInput').click();
+        });
+
+        // Drag and drop support
+        boardUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            boardUploadArea.style.background = '#f0f0f0';
+            boardUploadArea.style.borderColor = '#d4a574';
+        });
+
+        boardUploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            boardUploadArea.style.background = '';
+            boardUploadArea.style.borderColor = '';
+        });
+
+        boardUploadArea.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            boardUploadArea.style.background = '';
+            boardUploadArea.style.borderColor = '';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                log(`Processing dropped board image: ${files[0].name}`);
+                boardImage = await compressAndPreviewBoard(files[0], 'boardPreview');
+            }
+        });
+
+        document.getElementById('boardFileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                log(`Processing board image: ${file.name}`);
+                boardImage = await compressAndPreviewBoard(file, 'boardPreview');
+            }
+        });
+
+        async function compressAndPreviewBoard(file, previewId) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const maxSize = 800;
+                        if (width > height && width > maxSize) {
+                            height *= maxSize / width;
+                            width = maxSize;
+                        } else if (height > maxSize) {
+                            width *= maxSize / height;
+                            height = maxSize;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        log(`Board image compressed: ${e.target.result.length} → ${compressedDataUrl.length} bytes`);
+
+                        const preview = document.getElementById(previewId);
+                        preview.innerHTML = `<img src="${compressedDataUrl}" style="width: 200px; height: auto; border-radius: 8px; border: 2px solid #d4a574;">`;
+
+                        resolve(compressedDataUrl);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function saveBoard() {
+            log('=== saveBoard called ===');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            const title = document.getElementById('boardTitle').value.trim();
+            const content = document.getElementById('boardContent').value.trim();
+            const author = document.getElementById('boardAuthor').value.trim();
+            const pinned = document.getElementById('boardPinned').checked;
+
+            log(`Title: ${title}, Content length: ${content.length}, Editing ID: ${editingBoardId}`);
+
+            if (!title || !content) {
+                showAlert('error', '제목과 내용을 입력해주세요.');
+                return;
+            }
+
+            try {
+                progressBar.classList.add('show');
+
+                const data = {
+                    title: title,
+                    content: content,
+                    author: author || '관리자',
+                    category: '',
+                    views: 0,
+                    is_pinned: pinned
+                };
+
+                // Add image if present
+                if (boardImage) {
+                    data.image_url = boardImage;
+                }
+
+                let response;
+                if (editingBoardId) {
+                    // UPDATE existing post
+                    progressText.textContent = '게시글 수정 중...';
+                    log(`Updating board post ${editingBoardId}`);
+                    response = await fetch(`tables/board/${editingBoardId}`, {
+                        method: 'PATCH',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    // CREATE new post
+                    progressText.textContent = '게시글 저장 중...';
+                    log('Creating new board post');
+                    response = await fetch('tables/board', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                log(`Response status: ${response.status}`);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    log(`Error: ${errorText}`);
+                    throw new Error('Failed');
+                }
+
+                const result = await response.json();
+                log(`Board operation successful: ${JSON.stringify(result)}`);
+
+                progressBar.classList.remove('show');
+                showAlert('success', editingBoardId ? '✅ 게시글이 수정되었습니다!' : '✅ 게시글이 저장되었습니다!');
+                resetBoard();
+                loadBoardItems();
+            } catch (error) {
+                progressBar.classList.remove('show');
+                log(`Error saving board: ${error.message}`);
+                showAlert('error', '❌ 저장 실패: ' + error.message);
+            }
+        }
+
+        function resetBoard() {
+            document.getElementById('boardTitle').value = '';
+            document.getElementById('boardContent').value = '';
+            document.getElementById('boardAuthor').value = '관리자';
+            document.getElementById('boardPinned').checked = false;
+            document.getElementById('boardFileInput').value = '';
+            document.getElementById('boardPreview').innerHTML = '';
+            boardImage = '';
+            editingBoardId = null;
+        }
+
+        async function loadBoardItems() {
+            try {
+                const response = await fetch('tables/board?limit=100');
+                const data = await response.json();
+                const container = document.getElementById('boardItems');
+                const countEl = document.getElementById('boardCount');
+                container.innerHTML = '';
+
+                if (data.data && data.data.length > 0) {
+                    countEl.textContent = data.data.length;
+                    
+                    data.data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'item';
+                        const imgPreview = item.image_url 
+                            ? `<img src="${item.image_url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; float: left; margin-right: 15px;">` 
+                            : '';
+                        
+                        const contentPreview = item.content && item.content.trim() 
+                            ? (item.content.substring(0, 100) + (item.content.length > 100 ? '...' : ''))
+                            : '<span style="color: #ff6b6b; font-weight: bold;">⚠️ 본문 없음 - 수정 필요!</span>';
+                        
+                        div.innerHTML = `
+                            ${imgPreview}
+                            <h3>${item.title}</h3>
+                            <p><strong>작성자:</strong> ${item.author}</p>
+                            <p><strong>조회수:</strong> ${item.views || 0}</p>
+                            <p><strong>내용:</strong> ${contentPreview}</p>
+                            ${item.is_pinned ? '<p style="color: #d4a574; font-weight: bold;">📌 상단 고정</p>' : ''}
+                            <div class="actions" style="clear: both; margin-top: 10px;">
+                                <button class="btn btn-sm btn-secondary" onclick="editBoard('${item.id}')">
+                                    <i class="fas fa-edit"></i> 수정
+                                </button>
+                                <button class="btn btn-sm" onclick="viewBoard('${item.id}')" style="background: #2196F3;">
+                                    <i class="fas fa-eye"></i> 내용보기
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteBoard('${item.id}')">
+                                    <i class="fas fa-trash"></i> 삭제
+                                </button>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                } else {
+                    countEl.textContent = '0';
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">게시글이 없습니다.</p>';
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function editBoard(id) {
+            log(`Edit board item: ${id}`);
+            try {
+                const response = await fetch(`tables/board/${id}`);
+                const item = await response.json();
+                
+                log(`Loaded board item:`, item);
+                log(`Content value:`, item.content);
+                log(`Content length:`, item.content?.length || 0);
+                
+                document.getElementById('boardTitle').value = item.title || '';
+                document.getElementById('boardContent').value = item.content || '';
+                document.getElementById('boardAuthor').value = item.author || '관리자';
+                document.getElementById('boardPinned').checked = item.is_pinned || false;
+                
+                // Show existing image if present
+                if (item.image_url) {
+                    const preview = document.getElementById('boardPreview');
+                    preview.innerHTML = `<img src="${item.image_url}" style="width: 200px; height: auto; border-radius: 8px; border: 2px solid #d4a574;">`;
+                    boardImage = item.image_url; // Keep existing image
+                }
+                
+                editingBoardId = id;
+                window.scrollTo(0, 0);
+                
+                if (!item.content || item.content.trim() === '') {
+                    showAlert('error', '⚠️ 경고: 이 게시글은 본문이 비어있습니다! 아래 "내용" 필드에 본문을 작성하고 저장해주세요.');
+                } else {
+                    showAlert('success', '✏️ 수정 모드: 내용을 변경하고 저장하면 기존 게시글이 수정됩니다.');
+                }
+            } catch (error) {
+                log(`Error loading board item: ${error.message}`);
+                showAlert('error', '게시글을 불러올 수 없습니다.');
+            }
+        }
+
+        async function viewBoard(id) {
+            log(`View board item: ${id}`);
+            try {
+                const response = await fetch(`tables/board/${id}`);
+                const item = await response.json();
+                
+                const content = `
+                    <h2 style="margin-bottom: 20px;">${item.title}</h2>
+                    <p style="color: #999; margin-bottom: 20px;">작성자: ${item.author} | 조회수: ${item.views || 0}</p>
+                    <div style="line-height: 1.8; padding: 20px; background: #fafafa; border-radius: 8px;">
+                        ${item.content}
+                    </div>
+                `;
+                
+                showAlert('success', content);
+            } catch (error) {
+                log(`Error viewing board item: ${error.message}`);
+                showAlert('error', '게시글을 불러올 수 없습니다.');
+            }
+        }
+
+        async function deleteBoard(id) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+            log(`Deleting board item: ${id}`);
+            try {
+                await fetch(`tables/board/${id}`, { method: 'DELETE' });
+                showAlert('success', '✅ 삭제되었습니다.');
+                loadBoardItems();
+            } catch (error) {
+                log(`Error deleting board: ${error.message}`);
+                showAlert('error', '❌ 삭제 실패');
+            }
+        }
+
+        // ============================================
+        // Publications & Media Management Functions
+        // ============================================
+        let editingPubId = null;
+        let uploadedPubImages = [];
+
+        async function savePublication() {
+            log('=== savePublication called ===');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            const category = document.getElementById('pubCategory').value;
+            const title = document.getElementById('pubTitle').value.trim();
+            const description = document.getElementById('pubDescription').value.trim();
+            const date = document.getElementById('pubDate').value.trim();
+            const link = document.getElementById('pubLink').value.trim();
+            const order = parseInt(document.getElementById('pubOrder').value) || 1;
+            const featured = document.getElementById('pubFeatured').checked;
+
+            if (!category) {
+                showAlert('error', '카테고리를 선택해주세요.');
+                return;
+            }
+
+            if (!title) {
+                showAlert('error', '제목을 입력해주세요.');
+                return;
+            }
+
+            // 수정 모드: 이미지 재업로드 필수 아님
+            if (!editingPubId && uploadedPubImages.length === 0) {
+                showAlert('error', '이미지를 선택해주세요.');
+                return;
+            }
+
+            try {
+                // **신규 추가 모드** - 다중 이미지 지원
+                if (!editingPubId && uploadedPubImages.length > 0) {
+                    progressBar.classList.add('show');
+                    let successCount = 0;
+
+                    for (let i = 0; i < uploadedPubImages.length; i++) {
+                        progressText.textContent = `업로드 중... (${i + 1}/${uploadedPubImages.length})`;
+
+                        const pubData = {
+                            category: category,
+                            title: uploadedPubImages.length > 1 ? `${title} ${i + 1}` : title,
+                            description: description,
+                            date: date,
+                            link: link,
+                            image_url: uploadedPubImages[i],
+                            order: order + i,
+                            is_featured: i === 0 ? featured : false
+                        };
+
+                        const response = await fetch('tables/publications', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(pubData)
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`저장 실패: ${errorText}`);
+                        }
+                        successCount++;
+                    }
+
+                    progressBar.classList.remove('show');
+                    showAlert('success', `${successCount}개의 Publication이 저장되었습니다!`);
+                    resetPublication();
+                    loadPublicationItems();
+                    return;
+                }
+
+                // **수정 모드**
+                progressBar.classList.add('show');
+                progressText.textContent = editingPubId ? '수정 중...' : '저장 중...';
+
+                const pubData = {
+                    category: category,
+                    title: title,
+                    description: description,
+                    date: date,
+                    link: link,
+                    order: order,
+                    is_featured: featured
+                };
+
+                // 새 이미지가 선택되었다면 교체
+                if (uploadedPubImages.length > 0) {
+                    pubData.image_url = uploadedPubImages[0];
+                }
+
+                let response;
+                if (editingPubId) {
+                    response = await fetch(`tables/publications/${editingPubId}`, {
+                        method: 'PATCH',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(pubData)
+                    });
+                } else {
+                    response = await fetch('tables/publications', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(pubData)
+                    });
+                }
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`저장 실패: ${errorText}`);
+                }
+
+                progressBar.classList.remove('show');
+                showAlert('success', editingPubId ? 'Publication이 수정되었습니다!' : 'Publication이 저장되었습니다!');
+                
+                resetPublication();
+                loadPublicationItems();
+            } catch (error) {
+                progressBar.classList.remove('show');
+                showAlert('error', `저장 실패: ${error.message}`);
+            }
+        }
+
+        function resetPublication() {
+            document.getElementById('pubCategory').value = '';
+            document.getElementById('pubTitle').value = '';
+            document.getElementById('pubDescription').value = '';
+            document.getElementById('pubDate').value = '';
+            document.getElementById('pubLink').value = '';
+            document.getElementById('pubOrder').value = '1';
+            document.getElementById('pubFeatured').checked = false;
+            document.getElementById('pubPreview').innerHTML = '';
+            uploadedPubImages = [];
+            editingPubId = null;
+            document.getElementById('pubEditMode').style.display = 'none';
+            document.getElementById('savePubBtnText').textContent = '저장';
+        }
+
+        async function loadPublicationItems() {
+            try {
+                const response = await fetch('tables/publications?limit=100&sort=order');
+                const data = await response.json();
+                const container = document.getElementById('pubItems');
+                const countEl = document.getElementById('pubCount');
+                container.innerHTML = '';
+
+                if (data.data && data.data.length > 0) {
+                    countEl.textContent = data.data.length;
+                    
+                    const categories = { thesis: '논문 & 전문서적', article: '기사 & 미디어', other: '기타' };
+                    const grouped = {};
+                    data.data.forEach(item => {
+                        if (!grouped[item.category]) grouped[item.category] = [];
+                        grouped[item.category].push(item);
+                    });
+
+                    Object.keys(categories).forEach(cat => {
+                        if (grouped[cat]) {
+                            const catDiv = document.createElement('div');
+                            catDiv.style.marginBottom = '30px';
+                            catDiv.innerHTML = `<h4 style="margin-bottom: 15px; color: #d4a574;">${categories[cat]} (${grouped[cat].length}개)</h4>`;
+                            container.appendChild(catDiv);
+
+                            grouped[cat].forEach(item => {
+                                const div = document.createElement('div');
+                                div.className = 'item';
+                                div.innerHTML = `
+                                    <div class="item-content">
+                                        <div style="flex: 1;">
+                                            <strong>${item.title}</strong>
+                                            ${item.is_featured ? '<span class="featured-badge">Featured</span>' : ''}
+                                            <div style="color: #999; font-size: 13px; margin-top: 5px;">
+                                                ${item.date ? `📅 ${item.date}` : ''} ${item.link ? `| <a href="${item.link}" target="_blank">링크</a>` : ''}
+                                            </div>
+                                            ${item.description ? `<p style="margin-top: 8px; color: #666; font-size: 14px;">${item.description}</p>` : ''}
+                                            <div style="color: #999; font-size: 12px; margin-top: 5px;">순서: ${item.order}</div>
+                                        </div>
+                                        <div class="item-actions">
+                                            <button class="btn-icon" onclick="editPublication('${item.id}')"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-icon btn-danger" onclick="deletePublication('${item.id}')"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </div>
+                                `;
+                                container.appendChild(div);
+                            });
+                        }
+                    });
+                } else {
+                    countEl.textContent = '0';
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">등록된 Publication이 없습니다.</p>';
+                }
+            } catch (error) {
+                showAlert('error', 'Publications를 불러올 수 없습니다.');
+            }
+        }
+
+        async function editPublication(id) {
+            try {
+                const response = await fetch(`tables/publications/${id}`);
+                const item = await response.json();
+                
+                document.getElementById('pubCategory').value = item.category;
+                document.getElementById('pubTitle').value = item.title;
+                document.getElementById('pubDescription').value = item.description || '';
+                document.getElementById('pubDate').value = item.date || '';
+                document.getElementById('pubLink').value = item.link || '';
+                document.getElementById('pubOrder').value = item.order || 1;
+                document.getElementById('pubFeatured').checked = item.is_featured || false;
+                
+                document.getElementById('pubEditMode').style.display = 'block';
+                document.getElementById('savePubBtnText').textContent = '수정 저장';
+                editingPubId = id;
+                window.scrollTo(0, 0);
+                showAlert('success', '✏️ 수정 모드');
+            } catch (error) {
+                showAlert('error', 'Publication을 불러올 수 없습니다.');
+            }
+        }
+
+        async function deletePublication(id) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+            
+            try {
+                await fetch(`tables/publications/${id}`, { method: 'DELETE' });
+                showAlert('success', 'Publication이 삭제되었습니다!');
+                loadPublicationItems();
+            } catch (error) {
+                showAlert('error', 'Publication 삭제에 실패했습니다.');
+            }
+        }
+
+        async function autoReorderPublications() {
+            if (!confirm('현재 표시 순서대로 1, 2, 3... 으로 자동 재정렬하시겠습니까?\n\n⚠️ 기존 순서가 모두 변경됩니다.')) {
+                return;
+            }
+
+            try {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.classList.add('show');
+                document.getElementById('progressText').textContent = 'Publications 순서 자동 정렬 중...';
+
+                const response = await fetch('tables/publications?limit=100&sort=order');
+                const data = await response.json();
+                const allItems = data.data || [];
+                
+                console.log(`📋 Found ${allItems.length} publication items to reorder`);
+                
+                for (let i = 0; i < allItems.length; i++) {
+                    const item = allItems[i];
+                    const newOrder = i + 1;
+                    
+                    if (item.order !== newOrder) {
+                        console.log(`  📌 Reordering "${item.title}": ${item.order} → ${newOrder}`);
+                        await fetch(`tables/publications/${item.id}`, {
+                            method: 'PATCH',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ order: newOrder })
+                        });
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                }
+                
+                progressBar.classList.remove('show');
+                showAlert('success', 'Publications 순서가 자동 정렬되었습니다!');
+                loadPublicationItems();
+            } catch (error) {
+                document.getElementById('progressBar').classList.remove('show');
+                showAlert('error', '자동 정렬 실패: ' + error.message);
+            }
+        }
+
+        // Publications Image Upload
+        const pubUploadArea = document.getElementById('pubUploadArea');
+        const pubFileInput = document.getElementById('pubFileInput');
+
+        pubUploadArea.onclick = () => {
+            pubFileInput.click();
+        };
+
+        pubUploadArea.ondragover = (e) => {
+            e.preventDefault();
+            pubUploadArea.style.background = '#fff8f0';
+        };
+
+        pubUploadArea.ondragleave = () => {
+            pubUploadArea.style.background = '#fafafa';
+        };
+
+        pubUploadArea.ondrop = (e) => {
+            e.preventDefault();
+            pubUploadArea.style.background = '#fafafa';
+            handlePubFiles(e.dataTransfer.files);
+        };
+
+        pubFileInput.onchange = (e) => {
+            handlePubFiles(e.target.files);
+        };
+
+        function handlePubFiles(files) {
+            const preview = document.getElementById('pubPreview');
+            preview.innerHTML = '';
+            uploadedPubImages = [];
+
+            if (files.length === 0) return;
+
+            [...files].forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    compressPubImage(file, index);
+                }
+            });
+        }
+
+        function compressPubImage(file, index) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+                    const maxSize = 1200;
+
+                    if (width > maxSize || height > maxSize) {
+                        if (width > height) {
+                            height = (height / width) * maxSize;
+                            width = maxSize;
+                        } else {
+                            width = (width / height) * maxSize;
+                            height = maxSize;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    uploadedPubImages.push(compressedDataUrl);
+
+                    const preview = document.getElementById('pubPreview');
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.innerHTML = `
+                        <img src="${compressedDataUrl}" alt="${file.name}">
+                        <button class="preview-remove" onclick="removePubPreview(${index})">×</button>
+                        <p>${file.name}</p>
+                    `;
+                    preview.appendChild(div);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removePubPreview(index) {
+            uploadedPubImages.splice(index, 1);
+            const preview = document.getElementById('pubPreview');
+            const items = preview.querySelectorAll('.preview-item');
+            if (items[index]) items[index].remove();
+        }
+
+        // ========================================
+        // EXPERTISE FUNCTIONS
+        // ========================================
+        let editingExpertiseId = null;
+
+        async function loadExpertiseItems() {
+            try {
+                const response = await fetch('tables/expertise?limit=100&sort=order');
+                const data = await response.json();
+                const container = document.getElementById('expertiseItems');
+                const countEl = document.getElementById('expertiseCount');
+                container.innerHTML = '';
+
+                if (data.data && data.data.length > 0) {
+                    countEl.textContent = data.data.length;
+                    
+                    data.data.forEach((item, index) => {
+                        const div = document.createElement('div');
+                        div.style.borderLeft = item.is_featured ? '4px solid #d4a574' : '4px solid #e5e5e5';
+                        div.style.marginBottom = '10px';
+                        div.style.padding = '12px';
+                        div.style.background = 'white';
+                        div.style.borderRadius = '6px';
+                        
+                        const tags = Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '';
+                        
+                        div.innerHTML = `
+                            <div style="display: flex; align-items: flex-start; gap: 15px;">
+                                <div style="font-size: 32px; color: #d4a574;"><i class="fas ${item.icon}"></i></div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                        <strong style="font-size: 15px;">${item.title}</strong>
+                                        ${item.is_featured ? '<span style="background: #d4a574; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">★ Featured</span>' : ''}
+                                        <span style="color: #999; font-size: 13px;">순서: ${item.order}</span>
+                                    </div>
+                                    ${item.description ? `<div style="color: #666; font-size: 13px; margin-bottom: 8px;">${item.description}</div>` : ''}
+                                    ${tags ? `<div style="color: #999; font-size: 12px;">🏷️ ${tags}</div>` : ''}
+                                </div>
+                                <div style="display: flex; gap: 5px; flex-shrink: 0;">
+                                    <button class="btn-icon" onclick="editExpertise('${item.id}')" title="수정">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon btn-danger" onclick="deleteExpertise('${item.id}')" title="삭제">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                } else {
+                    countEl.textContent = '0';
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">등록된 Expertise가 없습니다.</p>';
+                }
+            } catch (error) {
+                showAlert('error', 'Expertise를 불러올 수 없습니다.');
+            }
+        }
+
+        async function saveExpertise() {
+            const title = document.getElementById('expertiseTitle').value.trim();
+            const icon = document.getElementById('expertiseIcon').value.trim();
+            const description = document.getElementById('expertiseDescription').value.trim();
+            const tagsString = document.getElementById('expertiseTags').value.trim();
+            const order = parseInt(document.getElementById('expertiseOrder').value) || 1;
+            const featured = document.getElementById('expertiseFeatured').checked;
+
+            if (!title || !icon) {
+                showAlert('error', '제목과 아이콘은 필수입니다.');
+                return;
+            }
+
+            const tags = tagsString ? tagsString.split(',').map(t => t.trim()) : [];
+
+            const data = { title, icon, description, tags, order, is_featured: featured };
+
+            try {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.classList.add('show');
+                document.getElementById('progressText').textContent = '저장 중...';
+
+                // Get all existing items to check for order conflicts
+                const allResponse = await fetch('tables/expertise?limit=100&sort=order');
+                const allData = await allResponse.json();
+                const existingItems = allData.data || [];
+                console.log('📋 Current items:', existingItems.map(item => `${item.title}: order ${item.order}`));
+
+                // Find all items that need to be shifted (EXCLUDING the item being edited)
+                const itemsToShift = existingItems.filter(item => 
+                    item.order >= order && item.id !== editingExpertiseId
+                );
+
+                if (itemsToShift.length > 0) {
+                    console.log(`⚠️ ${itemsToShift.length} items will be shifted down:`, itemsToShift.map(item => `${item.title} (${item.order})`));
+                    
+                    // Step 1: Move items to temporary high order numbers (1000+) to avoid conflicts
+                    console.log('🔄 Step 1: Moving items to temporary positions...');
+                    for (let i = 0; i < itemsToShift.length; i++) {
+                        const item = itemsToShift[i];
+                        const tempOrder = 1000 + i;
+                        console.log(`  📌 Temp: "${item.title}" ${item.order} → ${tempOrder}`);
+                        await fetch(`tables/expertise/${item.id}`, {
+                            method: 'PATCH',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ order: tempOrder })
+                        });
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    
+                    // Step 2: Move items back to their final positions (original + 1)
+                    console.log('🔄 Step 2: Moving items to final positions...');
+                    for (const item of itemsToShift) {
+                        const finalOrder = item.order + 1;
+                        console.log(`  ✅ Final: "${item.title}" → ${finalOrder}`);
+                        await fetch(`tables/expertise/${item.id}`, {
+                            method: 'PATCH',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ order: finalOrder })
+                        });
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    console.log('✅ All items shifted successfully');
+                }
+
+                if (editingExpertiseId) {
+                    console.log(`📝 Updating Expertise ID: ${editingExpertiseId}`, data);
+                    const response = await fetch(`tables/expertise/${editingExpertiseId}`, {
+                        method: 'PATCH',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    console.log('✅ Update result:', result);
+                    showAlert('success', `Expertise가 수정되었습니다! (순서: ${order})`);
+                } else {
+                    console.log('➕ Creating new Expertise:', data);
+                    const response = await fetch('tables/expertise', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    console.log('✅ Create result:', result);
+                    showAlert('success', `Expertise가 추가되었습니다! (순서: ${order})`);
+                }
+
+                progressBar.classList.remove('show');
+                resetExpertiseForm();
+                await loadExpertiseItems();
+                console.log('🔄 Expertise 목록 새로고침 완료. 메인 페이지를 새로고침하세요!');
+            } catch (error) {
+                document.getElementById('progressBar').classList.remove('show');
+                showAlert('error', '저장 실패: ' + error.message);
+            }
+        }
+
+        async function editExpertise(id) {
+            try {
+                const response = await fetch(`tables/expertise/${id}`);
+                const item = await response.json();
+                
+                document.getElementById('expertiseTitle').value = item.title;
+                document.getElementById('expertiseIcon').value = item.icon;
+                document.getElementById('expertiseDescription').value = item.description || '';
+                document.getElementById('expertiseTags').value = Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '';
+                document.getElementById('expertiseOrder').value = item.order || 1;
+                document.getElementById('expertiseFeatured').checked = item.is_featured || false;
+                
+                editingExpertiseId = id;
+                document.getElementById('expertiseEditMode').style.display = 'block';
+                document.getElementById('saveExpertiseBtnText').textContent = '수정 저장';
+                window.scrollTo(0, 0);
+                showAlert('success', '✏️ 수정 모드');
+            } catch (error) {
+                showAlert('error', 'Expertise를 불러올 수 없습니다.');
+            }
+        }
+
+        async function deleteExpertise(id) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+            try {
+                await fetch(`tables/expertise/${id}`, { method: 'DELETE' });
+                showAlert('success', 'Expertise가 삭제되었습니다!');
+                loadExpertiseItems();
+            } catch (error) {
+                showAlert('error', 'Expertise 삭제에 실패했습니다.');
+            }
+        }
+
+        function resetExpertiseForm() {
+            document.getElementById('expertiseTitle').value = '';
+            document.getElementById('expertiseIcon').value = '';
+            document.getElementById('expertiseDescription').value = '';
+            document.getElementById('expertiseTags').value = '';
+            document.getElementById('expertiseOrder').value = '1';
+            document.getElementById('expertiseFeatured').checked = false;
+            editingExpertiseId = null;
+            document.getElementById('expertiseEditMode').style.display = 'none';
+            document.getElementById('saveExpertiseBtnText').textContent = '저장';
+        }
+
+        function cancelEditExpertise() {
+            resetExpertiseForm();
+            showAlert('success', '수정이 취소되었습니다.');
+        }
+
+        async function autoReorderExpertise() {
+            if (!confirm('현재 표시 순서대로 1, 2, 3... 으로 자동 재정렬하시겠습니까?\n\n⚠️ 기존 순서가 모두 변경됩니다.')) {
+                return;
+            }
+
+            try {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.classList.add('show');
+                document.getElementById('progressText').textContent = '순서 자동 정렬 중...';
+
+                console.log('🔄 Starting auto-reorder...');
+                
+                // Get all items sorted by current order
+                const response = await fetch('tables/expertise?limit=100&sort=order');
+                const data = await response.json();
+                const allItems = data.data || [];
+                
+                console.log(`📋 Found ${allItems.length} items to reorder`);
+                
+                // Reorder sequentially (1, 2, 3, 4, ...)
+                for (let i = 0; i < allItems.length; i++) {
+                    const item = allItems[i];
+                    const newOrder = i + 1;
+                    
+                    if (item.order !== newOrder) {
+                        console.log(`  📌 Reordering "${item.title}": ${item.order} → ${newOrder}`);
+                        await fetch(`tables/expertise/${item.id}`, {
+                            method: 'PATCH',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ order: newOrder })
+                        });
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    } else {
+                        console.log(`  ✓ "${item.title}" already at order ${newOrder}`);
+                    }
+                }
+                
+                console.log('✅ Auto-reorder completed!');
+                progressBar.classList.remove('show');
+                showAlert('success', '순서가 1, 2, 3... 으로 자동 정렬되었습니다! 메인 페이지를 새로고침하세요.');
+                loadExpertiseItems();
+            } catch (error) {
+                document.getElementById('progressBar').classList.remove('show');
+                console.error('❌ Auto-reorder failed:', error);
+                showAlert('error', '자동 정렬 실패: ' + error.message);
+            }
+        }
+
+        // ========================================
+        // ABOUT ME EDUCATION FUNCTIONS
+        // ========================================
+        async function loadAboutEducation() {
+            try {
+                const response = await fetch('tables/about_education?limit=1');
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    const item = data.data[0];
+                    document.getElementById('edu1').value = item.edu1 || '';
+                    document.getElementById('edu2').value = item.edu2 || '';
+                    document.getElementById('edu3').value = item.edu3 || '';
+                    document.getElementById('edu4').value = item.edu4 || '';
+                    document.getElementById('edu5').value = item.edu5 || '';
+                    showAlert('success', '학력 데이터를 불러왔습니다!');
+                } else {
+                    showAlert('success', '저장된 학력 데이터가 없습니다. 새로 입력해주세요.');
+                }
+            } catch (error) {
+                console.error('Error loading education:', error);
+                showAlert('error', '학력 데이터를 불러올 수 없습니다.');
+            }
+        }
+
+        async function saveAboutEducation() {
+            const edu1 = document.getElementById('edu1').value.trim();
+            const edu2 = document.getElementById('edu2').value.trim();
+            const edu3 = document.getElementById('edu3').value.trim();
+            const edu4 = document.getElementById('edu4').value.trim();
+            const edu5 = document.getElementById('edu5').value.trim();
+
+            const data = { edu1, edu2, edu3, edu4, edu5 };
+
+            try {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.classList.add('show');
+                document.getElementById('progressText').textContent = '학력 저장 중...';
+
+                // Check if record exists
+                const checkResponse = await fetch('tables/about_education?limit=1');
+                const checkData = await checkResponse.json();
+
+                if (checkData.data && checkData.data.length > 0) {
+                    // Update existing record
+                    const existingId = checkData.data[0].id;
+                    await fetch(`tables/about_education/${existingId}`, {
+                        method: 'PATCH',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                    showAlert('success', '학력이 수정되었습니다! 메인 페이지를 새로고침하세요.');
+                } else {
+                    // Create new record
+                    await fetch('tables/about_education', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                    showAlert('success', '학력이 저장되었습니다! 메인 페이지를 새로고침하세요.');
+                }
+
+                progressBar.classList.remove('show');
+            } catch (error) {
+                document.getElementById('progressBar').classList.remove('show');
+                showAlert('error', '학력 저장 실패: ' + error.message);
+            }
+        }
+
+        // ========================================
+        // RESUME HEADER FUNCTIONS
+        // ========================================
+        async function loadResumeHeader() {
+            try {
+                const response = await fetch('tables/resume_header?limit=1');
+                const data = await response.json();
+                const currentDiv = document.getElementById('resumeHeaderCurrent');
+                
+                if (data.data && data.data.length > 0) {
+                    const item = data.data[0];
+                    
+                    document.getElementById('resumeHeaderName').value = item.name || '';
+                    document.getElementById('resumeHeaderTitle').value = item.title || '';
+                    document.getElementById('resumeHeaderSkillsLeft').value = Array.isArray(item.skills_left) ? item.skills_left.join(', ') : '';
+                    document.getElementById('resumeHeaderSkillsRight').value = Array.isArray(item.skills_right) ? item.skills_right.join(', ') : '';
+                    
+                    const leftSkills = Array.isArray(item.skills_left) ? item.skills_left : [];
+                    const rightSkills = Array.isArray(item.skills_right) ? item.skills_right : [];
+                    
+                    currentDiv.innerHTML = `
+                        <h4 style="margin-bottom: 15px;">현재 설정</h4>
+                        <p><strong>이름:</strong> ${item.name || '-'}</p>
+                        <p><strong>직함:</strong> ${item.title || '-'}</p>
+                        <p><strong>왼쪽 스킬:</strong> ${leftSkills.join(', ') || '-'}</p>
+                        <p><strong>오른쪽 스킬:</strong> ${rightSkills.join(', ') || '-'}</p>
+                    `;
+                } else {
+                    currentDiv.innerHTML = '<p style="color: #999;">등록된 Resume 헤더가 없습니다.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading resume header:', error);
+            }
+        }
+
+        async function saveResumeHeader() {
+            const name = document.getElementById('resumeHeaderName').value.trim();
+            const title = document.getElementById('resumeHeaderTitle').value.trim();
+            const skillsLeftString = document.getElementById('resumeHeaderSkillsLeft').value.trim();
+            const skillsRightString = document.getElementById('resumeHeaderSkillsRight').value.trim();
+
+            // Allow saving with empty name/title (optional fields now)
+            console.log('💾 Saving Resume Header:', { name, title, skillsLeft: skillsLeftString, skillsRight: skillsRightString });
+
+            const skills_left = skillsLeftString ? skillsLeftString.split(',').map(s => s.trim()) : [];
+            const skills_right = skillsRightString ? skillsRightString.split(',').map(s => s.trim()) : [];
+
+            const data = { name, title, skills_left, skills_right };
+
+            try {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.classList.add('show');
+                document.getElementById('progressText').textContent = '저장 중...';
+
+                const checkResponse = await fetch('tables/resume_header?limit=1');
+                const checkData = await checkResponse.json();
+
+                if (checkData.data && checkData.data.length > 0) {
+                    const headerId = checkData.data[0].id;
+                    await fetch(`tables/resume_header/${headerId}`, {
+                        method: 'PATCH',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    await fetch('tables/resume_header', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                progressBar.classList.remove('show');
+                showAlert('success', 'Resume 헤더가 저장되었습니다!');
+                loadResumeHeader();
+            } catch (error) {
+                document.getElementById('progressBar').classList.remove('show');
+                showAlert('error', '저장 실패: ' + error.message);
+            }
+        }
+
+        // Initialize
+        log('Admin page loaded');
+        loadGalleryItems();
+        loadProfile();
+        loadAboutEducation();
+        loadExpertiseItems();
+        loadResumeHeader();
+        loadPublicationItems();
+        loadResumeItems();
+        loadBoardItems();
+    </script>
+</body>
+</html>
