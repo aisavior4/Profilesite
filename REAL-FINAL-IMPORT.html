@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ 정확한 이력서 데이터 Import (최종판)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .info-box li strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(168, 237, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .progress {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.05rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ 정확한 이력서 데이터 Import (최종판)</h1>
+        <p class="subtitle">사용자님이 제공하신 정확한 내용으로 Import 합니다</p>
+
+        <div class="warning">
+            <strong>⚠️ 중요 안내</strong>
+            이 작업은 기존의 모든 이력서 데이터를 완전히 삭제하고 새로 시작합니다.
+        </div>
+
+        <div class="info-box">
+            <h3>📊 Import 데이터 구성 (총 128개)</h3>
+            <ul>
+                <li><strong>학력:</strong> 5개</li>
+                <li><strong>사회경력:</strong> 20개</li>
+                <li><strong>국제공인 자격증:</strong> 18개 (특이 5개 + 세부 13개)</li>
+                <li><strong>저서:</strong> 4개</li>
+                <li><strong>논문:</strong> 3개</li>
+                <li><strong>주요 정부사업 및 프로젝트:</strong> 47개</li>
+                <li><strong>음향과정 교육 워크샵:</strong> 15개</li>
+                <li><strong>그 외 특강:</strong> 1개</li>
+                <li><strong>전문가 심의 및 평가활동:</strong> 2개</li>
+                <li><strong>NCS 개발 및 심의, 교육경력:</strong> 13개</li>
+            </ul>
+        </div>
+
+        <button id="startBtn" class="btn btn-primary" onclick="startProcess()">
+            🚀 시작하기 (모든 데이터 삭제 후 128개 항목 Import)
+        </button>
+
+        <div class="progress" id="progress">
+            <div style="text-align: center; margin-bottom: 10px; font-weight: 600;" id="progressText">준비 중...</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <button id="adminBtn" class="btn btn-success" onclick="goToAdmin()" style="display: none;">
+            ✨ 관리자 페이지에서 확인하기
+        </button>
+    </div>
+
+    <script>
+        const resumeData = [
+            // ========== 학력 (5개) ==========
+            { category: 'education', title: '음악학 박사', subtitle: '실용음악 전공', date: '세종대학교 일반대학원 음악학과', order: 1 },
+            { category: 'education', title: '실용음악학 석사', subtitle: '뮤직프로듀싱 전공', date: '추계예술대 문화예술대학원 컨템포러리뮤직 학과', order: 2 },
+            { category: 'education', title: 'Certificate IV', subtitle: 'Audio Engineering & Sound Production', date: 'SAE (School of Audio Engineering), Sydney, Australia', order: 3 },
+            { category: 'education', title: 'Diploma', subtitle: 'Audio Engineering & Post production', date: 'SAE (School of Audio Engineering), Sydney, Australia', order: 4 },
+            { category: 'education', title: 'Advanced Certificate', subtitle: 'Audio Engineering', date: 'JMC Audio Engineering Academy, Sydney, Australia', order: 5 },
+
+            // ========== 사회경력 (20개) ==========
+            { category: 'experience', title: '사단법인 한국 음향학회', subtitle: '현 산학협동 이사', date: '2023~현재', order: 1 },
+            { category: 'experience', title: '사단법인 한국 음향예술인 협회', subtitle: '제9대 회장', date: '2018~2022', order: 2 },
+            { category: 'experience', title: '사단법인 한국 음향예술인 협회', subtitle: '기획이사', date: '2007~2018', order: 3 },
+            { category: 'experience', title: '사단법인 한국 음악스튜디오 협회', subtitle: '부회장', date: '2011~2020', order: 4 },
+            { category: 'experience', title: '세계음악학회', subtitle: '정회원', date: '2023~현재', order: 5 },
+            { category: 'experience', title: '세종대학교 음악학과', subtitle: '레코딩, 믹싱, 음향 출강', date: '2023~현재', order: 6 },
+            { category: 'experience', title: '세종대학교 융합대학원', subtitle: '음향 출강', date: '2025~현재', order: 7 },
+            { category: 'experience', title: '한국영상대학교 음향제작과', subtitle: '겸임교수', date: '2024~현재', order: 8 },
+            { category: 'experience', title: 'SJA Music Institute', subtitle: '음향 강사', date: '2025~현재', order: 9 },
+            { category: 'experience', title: '한국예술원 음향제작과', subtitle: '전임교수', date: '2018~2024', order: 10 },
+            { category: 'experience', title: '한국예술원 음향제작과', subtitle: '겸임교수', date: '2013~2017', order: 11 },
+            { category: 'experience', title: '서울 종합예술학교 실용음악과', subtitle: '음향 출강', date: '2009~2015', order: 12 },
+            { category: 'experience', title: '한국방송아카데미(현 한국방송예술진흥원)', subtitle: '음향과 출강', date: '1998~2003', order: 13 },
+            { category: 'experience', title: '글로벌 음악오픈마켓 eMUSICMARKET.com', subtitle: '대표', date: '2012~현재', order: 14 },
+            { category: 'experience', title: '사운드캣 ㈜ 캣츠코 음향연구소', subtitle: '감독', date: '2019~2021', order: 15 },
+            { category: 'experience', title: 'AIM Recording Studio / Mastering Studio / Entertainment', subtitle: '대표', date: '2000~2011', order: 16 },
+            { category: 'experience', title: '광화문 AIM 레코딩 스튜디오', subtitle: '총감독', date: '2011~2014', order: 17 },
+            { category: 'experience', title: '코아 레코딩 스튜디오', subtitle: '레코딩엔지니어', date: '1998~2000', order: 18 },
+            { category: 'experience', title: '호주 시드니 Alberts Studio', subtitle: 'In House 엔지니어', date: '1997~1998', order: 19 },
+            { category: 'experience', title: '음향전문지 PA (Professional Audio)', subtitle: '창간 멤버 및 필진', date: '2000~2022', order: 20 },
+
+            // ========== 국제공인 자격증 특이 내용 (5개) ==========
+            { category: 'certification', title: 'AVID 사 Dolby ATMOS 국제공인 인스트럭터 ACI / Professional', subtitle: '전 세계 33인중 1인', date: '', order: 1 },
+            { category: 'certification', title: 'AVID 사 Pro Tools 국제공인 인스트럭터 ACI', subtitle: 'AVID Certified Instructor', date: '', order: 2 },
+            { category: 'certification', title: 'Steinberg 사 국제공인 Cubase 검정위원회 심의위원 및 Cubase Master', subtitle: '', date: '', order: 3 },
+            { category: 'certification', title: 'Audinate 사 네트워크 오디오 Dante Certified International Trainer', subtitle: '국내 5인중 1인', date: '', order: 4 },
+            { category: 'certification', title: '문화체육관광부 등록 Pro Tools 실무자격증 시험 주관 및 출제위원', subtitle: '', date: '', order: 5 },
+
+            // ========== 국제공인 자격증 세부 13개 ==========
+            { category: 'certification', title: 'Dolby ATMOS Pro Tools Certified Instructor II', subtitle: '돌비 애트모스 국제공인인스트럭터, 전세계 33인중 1인', date: '', order: 101 },
+            { category: 'certification', title: 'Dolby ATMOS Pro Tools Certified Instructor', subtitle: '', date: '', order: 102 },
+            { category: 'certification', title: 'Dolby ATMOS Certified Professional', subtitle: '', date: '', order: 103 },
+            { category: 'certification', title: 'Pro Tools Certified Instructor 2024-2026', subtitle: '', date: '', order: 104 },
+            { category: 'certification', title: 'Pro Tools Specialist 2022', subtitle: '', date: '', order: 105 },
+            { category: 'certification', title: 'Pro Tools Version 2020 / 2021 Certified Instructor', subtitle: '', date: '', order: 106 },
+            { category: 'certification', title: 'Pro Tools Version 2020 Certified User', subtitle: '', date: '', order: 107 },
+            { category: 'certification', title: 'Pro Tools Version 12 Certified Instructor', subtitle: '', date: '', order: 108 },
+            { category: 'certification', title: 'Pro Tools Version 12 Certified User', subtitle: '', date: '', order: 109 },
+            { category: 'certification', title: 'Cubase Certified Master', subtitle: '', date: '', order: 110 },
+            { category: 'certification', title: 'Dante International Trainer', subtitle: '국제공인인스트럭터, 국내 5인중 1인', date: '', order: 111 },
+            { category: 'certification', title: 'Dante Certification Level 2', subtitle: '', date: '', order: 112 },
+            { category: 'certification', title: 'Dante Certification Level 1', subtitle: '', date: '', order: 113 },
+
+            // ========== 저서 (4개) ==========
+            { category: 'book', title: '사운드 프로덕션을 위한 레코딩, 믹싱 콘솔의 이해', subtitle: 'feat. SSL 4000G Recording Console / AVID Pro Tools', date: '', order: 1 },
+            { category: 'book', title: '음향전문가 6인의 노하우집약서 Sound Workshop', subtitle: '', date: '', order: 2 },
+            { category: 'book', title: '프로툴즈 운용능력평가 문제집', subtitle: '', date: '', order: 3 },
+            { category: 'book', title: 'NCS 교재 녹음준비, 녹음, 믹싱, 마스터링, 음악마케팅 단독 집필', subtitle: '', date: '', order: 4 },
+
+            // ========== 논문 (3개) ==========
+            { category: 'paper', title: '인공지능 기술발전에 따른 음악산업 실태 연구', subtitle: '박사 학위논문', date: '', order: 1 },
+            { category: 'paper', title: '각 음악장르의 악기구성중 Kick Drum이 차지하는 주파수 영역의 분석과 음악내의 Level 분석연구', subtitle: '석사 학위논문', date: '', order: 2 },
+            { category: 'paper', title: '음악의 심리적, 공간적 연상과 상상력을 부가시키는 시간기반 이펙트 프로세서 활용의 분석', subtitle: '학술 논문', date: '', order: 3 },
+
+            // ========== 주요 정부사업 및 프로젝트 (47개) ==========
+            { category: 'project', title: '2024 LG AI EXAONE 로고 사운드 디자인 작곡 및 믹싱', subtitle: '', date: '2024', order: 1 },
+            { category: 'project', title: '2024 한국문화예술위원회 ARKO 예비예술인지원사업', subtitle: '예비예술인의 현장연계 지원 컨서시엄 기획, 진행 레코딩, 믹싱, 프로듀싱, 마스터링 담당 (세종대, 동서울대, 동아방송대, 한국예술원 20팀 참여)', date: '2024', order: 2 },
+            { category: 'project', title: '2023 전주정보문화산업진흥원 사운드효과음향심포지엄', subtitle: '서울, 부산, 전주, 제천 주관 기획 진행', date: '2023', order: 3 },
+            { category: 'project', title: '2022 전주정보문화산업진흥원 K-Sound Library 음원검수 사업 수행', subtitle: '', date: '2022', order: 4 },
+            { category: 'project', title: 'KASA 제3회 대한민국 음향산업 음악샘플러 제작', subtitle: '총기획, 10팀참여, 프로듀싱, 편곡, 레코딩, 믹싱, 유통', date: '2021', order: 5 },
+            { category: 'project', title: 'K-POP Production Master Class Webinar', subtitle: '총기획, 진행', date: '2021', order: 6 },
+            { category: 'project', title: 'KASA x Direm 음악모니터링 전문 이어폰 튜닝 및 제작', subtitle: '', date: '2020', order: 7 },
+            { category: 'project', title: 'KASA 제2회 대한민국 음향산업 음악샘플러 제작', subtitle: '총기획, 10팀참여, 프로듀싱, 편곡, 레코딩, 믹싱, 유통', date: '2020', order: 8 },
+            { category: 'project', title: '그래미 수상자 Tony Maserati 초청 세미나 주최', subtitle: '', date: '2019', order: 9 },
+            { category: 'project', title: 'KASA 제1회 대한민국 음향산업 음악샘플러 제작', subtitle: '총기획, 6팀참여, 프로듀싱, 편곡, 레코딩, 믹싱, 유통', date: '2019', order: 10 },
+            { category: 'project', title: 'K·SOUND & MUSIC FAIR 대한민국 음향음악산업전 주최', subtitle: '', date: '2019', order: 11 },
+            { category: 'project', title: '한국음향예술인협회 x 파트너사 사운드캣 교육 주최', subtitle: '', date: '2019', order: 12 },
+            { category: 'project', title: '제11회 프로툴즈 소프트웨어 실무능력자격증 시험 주관, 출제', subtitle: '', date: '2019', order: 13 },
+            { category: 'project', title: 'KOBA쇼 음향기술 세미나 좋은 사운드는 이렇게 만들어진다 주관', subtitle: '', date: '2019', order: 14 },
+            { category: 'project', title: 'Tony Maserati 초청 음악제작 세미나 주관', subtitle: '', date: '2018', order: 15 },
+            { category: 'project', title: '제10회 프로툴즈 소프트웨어 실무능력자격증 시험 주관, 출제', subtitle: '', date: '2018', order: 16 },
+            { category: 'project', title: 'KOBA쇼 음향기술 세미나 좋은 사운드는 이렇게 만들어진다 주관', subtitle: '', date: '2018', order: 17 },
+            { category: 'project', title: '제8,9회 프로툴즈 소프트웨어 실무능력자격증 시험 주관, 출제', subtitle: '', date: '2017', order: 18 },
+            { category: 'project', title: 'KOBA쇼 음향기술 세미나 좋은 사운드는 이렇게 만들어진다 주관', subtitle: '', date: '2017', order: 19 },
+            { category: 'project', title: 'KOBA쇼 음향기술 세미나 주관', subtitle: '믹싱, 마스터링, 디지털네트워크오디오, 콘서트', date: '2016', order: 20 },
+            { category: 'project', title: 'Cubase 세미나 + Mastering 세미나 주최, 주관', subtitle: '', date: '2015', order: 21 },
+            { category: 'project', title: 'Pro Tools 3인3색 In the Box 믹싱 세미나 주관', subtitle: '', date: '2015', order: 22 },
+            { category: 'project', title: '컴프레서의 모든것 세미나 주최', subtitle: '', date: '2015', order: 23 },
+            { category: 'project', title: 'KOBA쇼 음향기술 세미나 주관', subtitle: '영화/음악/게임사운드', date: '2015', order: 24 },
+            { category: 'project', title: '그래미 2회 수상 프로듀서/엔지니어 Tony Maserati 초청세미나 진행', subtitle: '', date: '2014', order: 25 },
+            { category: 'project', title: '실전 라이브 음향 라이브세팅/믹스/인이어모니터 실황 완벽가이드 세미나 주관', subtitle: '', date: '2014', order: 26 },
+            { category: 'project', title: '제7회 프로툴즈 소프트웨어 실무능력자격증 시험 주관 및 강의', subtitle: '', date: '2014', order: 27 },
+            { category: 'project', title: '제2,3,4,5,6,7,8,9,10,11,12회 스타인버그 공인 Cubase 자격증시험 주관', subtitle: '', date: '2014~2019', order: 28 },
+            { category: 'project', title: 'KOBA 음향기술세미나 주관진행 및 강의', subtitle: '헤드폰, 밴드레코딩/믹스', date: '2014', order: 29 },
+            { category: 'project', title: '여수시 이순신 거북선축제 플래시몹 공모 및 참가곡 공모 주관', subtitle: '', date: '2014', order: 30 },
+            { category: 'project', title: '주영훈 20주년기념 배반의 장미 편곡공모 컨테스트', subtitle: '', date: '2013', order: 31 },
+            { category: 'project', title: '7개 스마트폰 사운드 음질비교 테스트 세미나 주관', subtitle: '', date: '2013', order: 32 },
+            { category: 'project', title: '제1,2회 음악산업 소셜네트워킹 파티 주최', subtitle: '', date: '2013/2014', order: 33 },
+            { category: 'project', title: '한국 콘텐츠진흥원 해외음향거장 Jonathan Wyner, Mick Sawaguchi 초청 서라운드 기술세미나 주최', subtitle: '', date: '2010', order: 34 },
+            { category: 'project', title: '제2회 홍대로 페스티벌 주관', subtitle: '', date: '2006', order: 35 },
+            { category: 'project', title: '제1회 홍대로 페스티벌 기획, 주관', subtitle: '', date: '2005', order: 36 },
+            { category: 'project', title: '한텔 쿨키(Qoolqee) K7 음향튜닝 및 사운드디자인 담당', subtitle: '', date: '2004', order: 37 },
+            { category: 'project', title: '한텔 무선호출벨시스템 벨소리 사운드디자인 및 제작', subtitle: '', date: '2003', order: 38 },
+            { category: 'project', title: '14인 엔지니어의 마이크로폰 테크닉 세미나 주최', subtitle: '', date: '2001', order: 39 },
+
+            // ========== 음향과정 교육 워크샵 (15개) ==========
+            { category: 'workshop', title: '광주 음악창작소 전문인력양성 사운드엔지니어과정 전 분야 음향교육', subtitle: '', date: '2025', order: 1 },
+            { category: 'workshop', title: '2024 한국콘텐츠진흥원 뉴콘텐츠아카데미 3D 입체음향 강의', subtitle: '', date: '2024', order: 2 },
+            { category: 'workshop', title: '한국문화예술진흥원 ARKO 예비예술인양성사업 음악제작교육', subtitle: '', date: '2024', order: 3 },
+            { category: 'workshop', title: '광주 음악창작소 전문인력양성 사운드엔지니어과정 전 분야 음향교육', subtitle: '', date: '2023', order: 4 },
+            { category: 'workshop', title: '광주 음악창작소 전문인력양성 사운드엔지니어과정 전 분야 음향교육', subtitle: '', date: '2022', order: 5 },
+            { category: 'workshop', title: '성결대, 계원예대, 안양대, 한세대학교 2022 차세대 미디어사운드 전문가 양성교육', subtitle: 'Pro Tools 100레벨 국제공인자격과정 교육', date: '2022', order: 6 },
+            { category: 'workshop', title: '동아방송예술대학교 AVID 프로툴즈 실무자격 기본 및 심화 교육', subtitle: '', date: '2021', order: 7 },
+            { category: 'workshop', title: '광주 음악산업진흥센터 전문인력양성사업 전 분야 음향교육', subtitle: '', date: '2020', order: 8 },
+            { category: 'workshop', title: 'TBN 교통방송 전국 음향엔지니어 전 분야 음향실무 교육', subtitle: '', date: '2019', order: 9 },
+            { category: 'workshop', title: '충북 지식산업진흥원 라이징스타콘 음향 전 분야 음원사운드 제작교육', subtitle: '', date: '2019', order: 10 },
+            { category: 'workshop', title: '대구 디지털산업진흥원 첨단음향기술인력 양성교육 Steinberg Cubase', subtitle: '', date: '2018', order: 11 },
+            { category: 'workshop', title: '광주 음악산업진흥센터 AVID 프로툴즈 실무교육', subtitle: '', date: '2015', order: 12 },
+            { category: 'workshop', title: 'KOBA 쇼 좋은 음향은 이렇게 만들어진다 밴드레코딩테크닉 세미나 강의', subtitle: '', date: '2014', order: 13 },
+            { category: 'workshop', title: '대구 디지털산업진흥원 AVID 프로툴즈 실무자격 교육', subtitle: '', date: '2013', order: 14 },
+            { category: 'workshop', title: '충북 지식산업진흥원 e-Learning 음향장비론 동영상 강의', subtitle: '', date: '2010', order: 15 },
+
+            // ========== 그 외 특강 (1개) ==========
+            { category: 'lecture', title: '경기대, 백석대, 경상대, 경민대, 경일대, 부산예대, 고신대, 호서예전, 동아대, 동의대, 서울종합예술학교 및 다수 교육기관 특강', subtitle: '', date: '', order: 1 },
+
+            // ========== 전문가 심의 및 평가활동 (2개) ==========
+            { category: 'evaluation', title: '한국콘텐츠진흥원, 한국문화예술위원회, 고용노동부, 음악창작소, 정보문화산업진흥원, 교육청, 문화재단 산업인력공단 및 전국 지자체/문화재단의 핵심 평가위원', subtitle: '10년 이상 활동 중', date: '', order: 1 },
+            { category: 'evaluation', title: '주요 심의: 국가 지원 사업, 인력 양성 프로젝트, 기술 장비 도입, 콘텐츠 제작 지원, 공연 및 문화기획, 융합콘텐츠 등', subtitle: '음향 및 문화예술 산업 전반의 심의 진행 (총 60회 이상)', date: '', order: 2 },
+
+            // ========== NCS 개발 및 심의, 교육경력 (13개) ==========
+            { category: 'ncs', title: '고용노동부 한국직업능력개발원 직업능력개발계좌제 (ETPL) 통합 심사위원', subtitle: '', date: '2015~2025', order: 1 },
+            { category: 'ncs', title: '교육부 및 고용노동부 국가직무능력 표준(NCS)개발 문화예술분야, 음악콘텐츠 유통, 서비스, 문화콘텐츠 유통서비스 심의위원', subtitle: '', date: '2013~2025', order: 2 },
+            { category: 'ncs', title: '고용노동부 직업능력평가원 직업능력개발훈련사업 심사평가위원', subtitle: '', date: '2019~2025', order: 3 },
+            { category: 'ncs', title: '한국산업인력공단 실용예술분야 NCS WG개발기관 실용음악 총괄심의위원', subtitle: '', date: '2014', order: 4 },
+            { category: 'ncs', title: '고용노동부 한국 폴리텍대학 일학습병행제 전문위원', subtitle: '', date: '2015', order: 5 },
+            { category: 'ncs', title: '백석대학교 NCS기반 교육과정 실용음악학부 개발위원 SME', subtitle: '', date: '2015', order: 6 },
+            { category: 'ncs', title: 'NCS 및 NCS 기반자격 보완 검증위원', subtitle: '', date: '2016', order: 7 },
+            { category: 'ncs', title: 'NCS 개선직무 실용음악분야 선정위원', subtitle: '', date: '2017', order: 8 },
+            { category: 'ncs', title: '다수의 문화콘텐츠 교육기관 일학습병행제, 국비지원프로그램 및 계좌제 심사', subtitle: '', date: '', order: 9 }
+        ];
+
+        async function deleteAllData() {
+            const progressText = document.getElementById('progressText');
+            const progressFill = document.getElementById('progressFill');
+
+            progressText.textContent = '기존 데이터 삭제 중...';
+            
+            try {
+                const response = await fetch('tables/resume?limit=10000');
+                const result = await response.json();
+                
+                const totalItems = result.data.length;
+                console.log(`삭제할 항목: ${totalItems}개`);
+
+                for (let i = 0; i < result.data.length; i++) {
+                    const item = result.data[i];
+                    await fetch(`tables/resume/${item.id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const progress = Math.round(((i + 1) / totalItems) * 100);
+                    progressFill.style.width = progress + '%';
+                    progressFill.textContent = progress + '%';
+                }
+
+                console.log('모든 데이터 삭제 완료');
+                return totalItems;
+            } catch (error) {
+                console.error('삭제 오류:', error);
+                throw error;
+            }
+        }
+
+        async function importAllData() {
+            const progressText = document.getElementById('progressText');
+            const progressFill = document.getElementById('progressFill');
+
+            progressText.textContent = '새로운 데이터 Import 중...';
+            progressFill.style.width = '0%';
+            progressFill.textContent = '0%';
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 0; i < resumeData.length; i++) {
+                try {
+                    const response = await fetch('tables/resume', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(resumeData[i])
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                        console.error(`항목 ${i + 1} 저장 실패:`, resumeData[i]);
+                    }
+                } catch (error) {
+                    errorCount++;
+                    console.error(`항목 ${i + 1} 오류:`, error);
+                }
+
+                const progress = Math.round(((i + 1) / resumeData.length) * 100);
+                progressFill.style.width = progress + '%';
+                progressFill.textContent = progress + '%';
+            }
+
+            return { successCount, errorCount };
+        }
+
+        async function startProcess() {
+            const startBtn = document.getElementById('startBtn');
+            const progress = document.getElementById('progress');
+            const status = document.getElementById('status');
+            const adminBtn = document.getElementById('adminBtn');
+
+            if (!confirm('모든 기존 데이터를 삭제하고 128개 항목을 새로 Import합니다.\n계속하시겠습니까?')) {
+                return;
+            }
+
+            startBtn.disabled = true;
+            progress.style.display = 'block';
+            status.style.display = 'none';
+
+            try {
+                const deletedCount = await deleteAllData();
+                console.log(`${deletedCount}개 항목 삭제 완료`);
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                const result = await importAllData();
+
+                status.className = 'status success';
+                status.style.display = 'block';
+                status.innerHTML = `
+                    <strong>✅ Import 완료!</strong><br>
+                    삭제된 항목: ${deletedCount}개<br>
+                    추가된 항목: ${result.successCount}개<br>
+                    ${result.errorCount > 0 ? `실패: ${result.errorCount}개` : ''}
+                `;
+
+                adminBtn.style.display = 'block';
+            } catch (error) {
+                status.className = 'status error';
+                status.style.display = 'block';
+                status.innerHTML = `
+                    <strong>❌ 오류 발생</strong><br>
+                    ${error.message}
+                `;
+                startBtn.disabled = false;
+            }
+        }
+
+        function goToAdmin() {
+            window.location.href = 'admin-simple.html';
+        }
+    </script>
+</body>
+</html>

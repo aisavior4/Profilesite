@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume 데이터 가져오기</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #f5f5f5; padding: 40px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; }
+        h1 { margin-bottom: 30px; color: #333; }
+        .btn { padding: 15px 30px; background: #d4a574; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 700; }
+        .btn:hover { background: #c49463; }
+        .log { background: #f9f9f9; padding: 20px; border-radius: 6px; margin-top: 20px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 13px; }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📥 Resume 기존 데이터 데이터베이스로 가져오기</h1>
+        
+        <p style="margin-bottom: 20px; line-height: 1.6;">
+            현재 resume.html에 하드코딩된 <strong>13개 국제공인 자격증</strong>과 기타 이력 데이터를 
+            데이터베이스로 가져옵니다. 이렇게 하면 admin-simple.html에서 모든 항목을 수정할 수 있습니다.
+        </p>
+
+        <button class="btn" onclick="importAllData()">
+            <i class="fas fa-download"></i> 데이터 가져오기 시작
+        </button>
+
+        <div id="log" class="log" style="display: none;"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            logDiv.style.display = 'block';
+            const time = new Date().toLocaleTimeString();
+            const className = type;
+            logDiv.innerHTML += `<div class="${className}">[${time}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        // 13개 국제공인 자격증 데이터
+        const certifications = [
+            { title: "Pro Tools Expert", subtitle: "Avid Certified User & Instructor", year: "2024" },
+            { title: "한국음향예술인협회 인증 레코딩 엔지니어", subtitle: "Recording Engineer", year: "2023" },
+            { title: "Dolby ATMOS Premier Mastering Engineer", subtitle: "Dolby Laboratories", year: "2022" },
+            { title: "Dolby ATMOS Music Studio Premier Mastering Engineer", subtitle: "Dolby Laboratories", year: "2022" },
+            { title: "Dolby Digital Advanced Mastering Engineer", subtitle: "Dolby Laboratories", year: "2021" },
+            { title: "Ambisonics 3D Sound Certificate", subtitle: "Audio Engineering Society", year: "2021" },
+            { title: "Steinberg Cubase Expert Certificate", subtitle: "Steinberg Media Technologies", year: "2020" },
+            { title: "Avid Pro Tools Expert Certificate", subtitle: "Avid Technology", year: "2019" },
+            { title: "Dante Network Audio Certificate Level 3", subtitle: "Audinate", year: "2019" },
+            { title: "Universal Audio Console Expert Certificate", subtitle: "Universal Audio", year: "2018" },
+            { title: "SSL Recording Console Certificate", subtitle: "Solid State Logic", year: "2017" },
+            { title: "Sound Designer Professional Certificate", subtitle: "Audio Engineering Academy", year: "2016" },
+            { title: "Apple Certified Logic Pro Master", subtitle: "Apple Inc.", year: "2015" }
+        ];
+
+        // 사회경력 데이터 (일부 예시)
+        const experiences = [
+            { title: "한국음향예술인협회", subtitle: "부회장", year: "2020-현재" },
+            { title: "세종대학교 음악학과", subtitle: "겸임교수", year: "2018-현재" },
+            { title: "추계예술대학교", subtitle: "외래교수", year: "2015-현재" },
+            { title: "월간 PA (Professional Audio)", subtitle: "창간 및 편집인", year: "2005-현재" }
+        ];
+
+        // 저서 데이터
+        const books = [
+            { title: "Pro Tools 완전정복", subtitle: "음향 제작의 모든 것", year: "2023" },
+            { title: "Dolby ATMOS 실전 가이드", subtitle: "3D 음향의 세계", year: "2022" },
+            { title: "Recording Engineer Bible", subtitle: "레코딩 엔지니어 바이블", year: "2021" }
+        ];
+
+        async function importAllData() {
+            log('🚀 데이터 가져오기 시작...', 'info');
+            
+            let successCount = 0;
+            let errorCount = 0;
+
+            // 1. 13개 국제공인 자격증 가져오기
+            log('\n📋 국제공인 자격증 가져오기 중...', 'info');
+            for (let i = 0; i < certifications.length; i++) {
+                const cert = certifications[i];
+                try {
+                    const response = await fetch('tables/resume', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            category: 'certification',
+                            title: cert.title,
+                            subtitle: cert.subtitle,
+                            date: cert.year,
+                            description: '',
+                            order: i + 1,
+                            is_featured: i < 3 // 상위 3개만 Featured
+                        })
+                    });
+
+                    if (response.ok) {
+                        log(`✅ [${i+1}/13] ${cert.title} - 성공`, 'success');
+                        successCount++;
+                    } else {
+                        log(`❌ [${i+1}/13] ${cert.title} - 실패 (${response.status})`, 'error');
+                        errorCount++;
+                    }
+                } catch (error) {
+                    log(`❌ [${i+1}/13] ${cert.title} - 에러: ${error.message}`, 'error');
+                    errorCount++;
+                }
+
+                // 너무 빠르게 요청하지 않도록 약간의 딜레이
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+
+            // 2. 사회경력 가져오기
+            log('\n💼 사회경력 가져오기 중...', 'info');
+            for (let i = 0; i < experiences.length; i++) {
+                const exp = experiences[i];
+                try {
+                    const response = await fetch('tables/resume', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            category: 'experience',
+                            title: exp.title,
+                            subtitle: exp.subtitle,
+                            date: exp.year,
+                            description: '',
+                            order: i + 1,
+                            is_featured: false
+                        })
+                    });
+
+                    if (response.ok) {
+                        log(`✅ [${i+1}/${experiences.length}] ${exp.title} - 성공`, 'success');
+                        successCount++;
+                    } else {
+                        log(`❌ [${i+1}/${experiences.length}] ${exp.title} - 실패`, 'error');
+                        errorCount++;
+                    }
+                } catch (error) {
+                    log(`❌ [${i+1}/${experiences.length}] ${exp.title} - 에러: ${error.message}`, 'error');
+                    errorCount++;
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+
+            // 3. 저서 가져오기
+            log('\n📚 저서 가져오기 중...', 'info');
+            for (let i = 0; i < books.length; i++) {
+                const book = books[i];
+                try {
+                    const response = await fetch('tables/resume', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            category: 'book',
+                            title: book.title,
+                            subtitle: book.subtitle,
+                            date: book.year,
+                            description: '',
+                            order: i + 1,
+                            is_featured: false
+                        })
+                    });
+
+                    if (response.ok) {
+                        log(`✅ [${i+1}/${books.length}] ${book.title} - 성공`, 'success');
+                        successCount++;
+                    } else {
+                        log(`❌ [${i+1}/${books.length}] ${book.title} - 실패`, 'error');
+                        errorCount++;
+                    }
+                } catch (error) {
+                    log(`❌ [${i+1}/${books.length}] ${book.title} - 에러: ${error.message}`, 'error');
+                    errorCount++;
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+
+            // 최종 결과
+            log('\n' + '='.repeat(50), 'info');
+            log(`🎉 가져오기 완료!`, 'success');
+            log(`✅ 성공: ${successCount}개`, 'success');
+            log(`❌ 실패: ${errorCount}개`, 'error');
+            log('\n📍 다음 단계:', 'info');
+            log('1. admin-simple.html 열기', 'info');
+            log('2. "이력서" 탭 클릭', 'info');
+            log('3. 카테고리 "국제공인 자격증" 선택', 'info');
+            log('4. 13개 항목이 모두 표시되는지 확인', 'info');
+            log('5. 이제 모든 항목을 admin에서 수정 가능!', 'success');
+        }
+    </script>
+</body>
+</html>

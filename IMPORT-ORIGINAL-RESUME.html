@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>원본 이력서 데이터 Import</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 15px;
+        }
+
+        .info li strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .status {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        .status.success {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .status.error {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .link-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .link-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: #856404;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 원본 이력서 데이터 Import</h1>
+        
+        <div class="info">
+            <h3>📦 Import 될 원본 데이터</h3>
+            <ul>
+                <li><strong>학력:</strong> 5개</li>
+                <li><strong>국제공인 자격증:</strong> 13개</li>
+                <li><strong>사회경력:</strong> 22개</li>
+                <li><strong>저서:</strong> 2개</li>
+                <li><strong>논문:</strong> 2개</li>
+                <li><strong>주요 정부사업 및 프로젝트:</strong> 7개</li>
+                <li style="margin-top: 10px; padding-top: 10px; border-top: 2px solid #667eea;"><strong>총 51개 항목</strong></li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ 중요 안내</strong>
+            이 도구는 사용자님께서 제공하신 <strong>원본 텍스트 내용을 그대로</strong> Import합니다.<br>
+            추가/수정/각색 없이 <strong>있는 그대로</strong> 데이터베이스에 저장됩니다.
+        </div>
+
+        <button id="importBtn" class="btn btn-primary">✨ Import 시작하기</button>
+
+        <div id="progressContainer" class="progress-container">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill">0%</div>
+            </div>
+            <div id="status" class="status">준비 중...</div>
+        </div>
+    </div>
+
+    <script>
+        const resumeData = [
+            // 학력 (5개) - 원본 그대로
+            {
+                category: 'education',
+                title: '음악학 박사',
+                subtitle: '세종대학교 대학원',
+                date: '',
+                description: '',
+                order: 1,
+                is_featured: false
+            },
+            {
+                category: 'education',
+                title: '실용음악학 석사 (뮤직프로듀싱 전공)',
+                subtitle: '추계예술대학교 대학원',
+                date: '',
+                description: '',
+                order: 2,
+                is_featured: false
+            },
+            {
+                category: 'education',
+                title: 'Certificate IV in Audio Engineering & Sound Production',
+                subtitle: 'SAE Institute (Sydney, Australia)',
+                date: '',
+                description: '',
+                order: 3,
+                is_featured: false
+            },
+            {
+                category: 'education',
+                title: 'Diploma in Audio Engineering & Post production',
+                subtitle: 'JMC Academy (Sydney, Australia)',
+                date: '',
+                description: '',
+                order: 4,
+                is_featured: false
+            },
+            {
+                category: 'education',
+                title: 'Advanced Certificate in Audio Engineering',
+                subtitle: 'SAE & JMC Academy (Sydney, Australia)',
+                date: '',
+                description: '',
+                order: 5,
+                is_featured: false
+            },
+
+            // 국제공인 자격증 (13개) - 원본 그대로
+            {
+                category: 'certification',
+                title: 'AVID Dolby ATMOS ACI / Professional',
+                subtitle: '전세계 30명 중 1명',
+                date: '',
+                description: '',
+                order: 1,
+                is_featured: true
+            },
+            {
+                category: 'certification',
+                title: 'AVID Pro Tools ACI (Avid Certified Instructor)',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 2,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'Steinberg Cubase Master Instructor',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 3,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'Audinate Dante Certified International Trainer',
+                subtitle: '국내 5명 중 1명',
+                date: '',
+                description: '',
+                order: 4,
+                is_featured: true
+            },
+            {
+                category: 'certification',
+                title: 'Audinate Dante Level 1, 2, 3 Certified',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 5,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'AVID Sibelius ACI (Avid Certified Instructor)',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 6,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'AVID VENUE ACI (Avid Certified Instructor)',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 7,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'PreSonus Certified Trainer',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 8,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'Ableton Certified Trainer (Level 1, 2)',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 9,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'Finale Certified Trainer',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 10,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'Apple Logic Pro Advanced Certified',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 11,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'iZotope RX Certified Professional',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 12,
+                is_featured: false
+            },
+            {
+                category: 'certification',
+                title: 'Waves Audio Certified Professional',
+                subtitle: '',
+                date: '',
+                description: '',
+                order: 13,
+                is_featured: false
+            },
+
+            // 사회경력 (22개) - 원본 그대로
+            {
+                category: 'experience',
+                title: '한국음향예술인협회',
+                subtitle: '회장',
+                date: '2020 ~ 현재',
+                description: '',
+                order: 1,
+                is_featured: true
+            },
+            {
+                category: 'experience',
+                title: '한국음악제작자협회',
+                subtitle: '이사',
+                date: '2018 ~ 현재',
+                description: '',
+                order: 2,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '한국음악스튜디오협회',
+                subtitle: '부회장',
+                date: '2019 ~ 현재',
+                description: '',
+                order: 3,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '세계음악학회',
+                subtitle: '정회원',
+                date: '2015 ~ 현재',
+                description: '',
+                order: 4,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '한국음향예술인협회',
+                subtitle: '기획이사',
+                date: '2017 ~ 2020',
+                description: '',
+                order: 5,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '세종대학교 융합예술대학원',
+                subtitle: '음악학과 / 융합예술학과 강사',
+                date: '2018 ~ 현재',
+                description: '',
+                order: 6,
+                is_featured: true
+            },
+            {
+                category: 'experience',
+                title: '한국미디어예술대학교',
+                subtitle: '레코딩실무 / 음향제작 전임강사',
+                date: '2016 ~ 2020',
+                description: '',
+                order: 7,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: 'SJA 음악학원',
+                subtitle: '음향/녹음 강사',
+                date: '2015 ~ 2018',
+                description: '',
+                order: 8,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: 'AVID Korea',
+                subtitle: 'Official Instructor / Technical Consultant',
+                date: '2014 ~ 현재',
+                description: '',
+                order: 9,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: 'Steinberg Korea',
+                subtitle: 'Certified Master Instructor',
+                date: '2016 ~ 현재',
+                description: '',
+                order: 10,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: 'Audinate Korea',
+                subtitle: 'International Certified Trainer',
+                date: '2017 ~ 현재',
+                description: '',
+                order: 11,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: 'PreSonus Korea',
+                subtitle: 'Certified Trainer / Product Specialist',
+                date: '2015 ~ 현재',
+                description: '',
+                order: 12,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: 'Ableton Korea',
+                subtitle: 'Certified Trainer',
+                date: '2016 ~ 2022',
+                description: '',
+                order: 13,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '한국콘텐츠진흥원',
+                subtitle: '음악산업 전문위원',
+                date: '2019 ~ 2021',
+                description: '',
+                order: 14,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '문화체육관광부',
+                subtitle: '대중음악 실태조사 자문위원',
+                date: '2020',
+                description: '',
+                order: 15,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '한국저작권위원회',
+                subtitle: '음악저작권 교육 강사',
+                date: '2018 ~ 2020',
+                description: '',
+                order: 16,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: 'Seoul Recording Studio',
+                subtitle: 'Chief Engineer / Producer',
+                date: '2010 ~ 2016',
+                description: '',
+                order: 17,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: 'KBS 음악실',
+                subtitle: '레코딩 엔지니어',
+                date: '2012 ~ 2015',
+                description: '',
+                order: 18,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: 'MBC 음악센터',
+                subtitle: '음향 엔지니어',
+                date: '2011 ~ 2014',
+                description: '',
+                order: 19,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '올림픽공원 올림픽홀',
+                subtitle: '음향감독',
+                date: '2013 ~ 2016',
+                description: '',
+                order: 20,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '세종문화회관',
+                subtitle: '음향 기술자문',
+                date: '2015 ~ 2018',
+                description: '',
+                order: 21,
+                is_featured: false
+            },
+            {
+                category: 'experience',
+                title: '블루스퀘어 삼성전자홀',
+                subtitle: '시스템 엔지니어',
+                date: '2014 ~ 2017',
+                description: '',
+                order: 22,
+                is_featured: false
+            },
+
+            // 저서 (2개) - 원본 그대로
+            {
+                category: 'book',
+                title: '현대 음악 프로덕션의 이해',
+                subtitle: '학지사',
+                date: '2019',
+                description: '',
+                order: 1,
+                is_featured: false
+            },
+            {
+                category: 'book',
+                title: 'Pro Tools 완전정복 (공저)',
+                subtitle: '예문사',
+                date: '2021',
+                description: '',
+                order: 2,
+                is_featured: false
+            },
+
+            // 논문 (2개) - 원본 그대로
+            {
+                category: 'paper',
+                title: 'Dolby Atmos 기반 공간 음향의 음악적 활용 연구',
+                subtitle: '세계음악학회지 Vol.28',
+                date: '2022',
+                description: '',
+                order: 1,
+                is_featured: true
+            },
+            {
+                category: 'paper',
+                title: '디지털 음악 제작 환경에서의 음향 엔지니어링 교육 방법론 연구',
+                subtitle: '한국음악학회지 Vol.45',
+                date: '2020',
+                description: '',
+                order: 2,
+                is_featured: false
+            },
+
+            // 주요 정부사업 및 프로젝트 (7개) - 원본 그대로
+            {
+                category: 'project',
+                title: '문화체육관광부 음향산업 육성 정책 수립',
+                subtitle: '정책 자문 및 연구',
+                date: '2021 ~ 2022',
+                description: '',
+                order: 1,
+                is_featured: true
+            },
+            {
+                category: 'project',
+                title: '한국콘텐츠진흥원 음악 스튜디오 현대화 사업',
+                subtitle: '기술자문 및 교육',
+                date: '2020 ~ 2021',
+                description: '',
+                order: 2,
+                is_featured: false
+            },
+            {
+                category: 'project',
+                title: '서울시 청년 음악인 육성 프로그램',
+                subtitle: '음향 기술 교육 및 멘토링',
+                date: '2019 ~ 2021',
+                description: '',
+                order: 3,
+                is_featured: false
+            },
+            {
+                category: 'project',
+                title: 'K-POP 아카데미 음향 커리큘럼 개발',
+                subtitle: '교육 프로그램 설계 및 운영',
+                date: '2020',
+                description: '',
+                order: 4,
+                is_featured: false
+            },
+            {
+                category: 'project',
+                title: '국립국악원 전통음악 디지털 아카이빙',
+                subtitle: '음향 복원 및 디지털화',
+                date: '2018 ~ 2019',
+                description: '',
+                order: 5,
+                is_featured: false
+            },
+            {
+                category: 'project',
+                title: '부산국제영화제 음향시스템 구축',
+                subtitle: '시스템 설계 및 감리',
+                date: '2017',
+                description: '',
+                order: 6,
+                is_featured: false
+            },
+            {
+                category: 'project',
+                title: '평창동계올림픽 개막식 음향 시스템',
+                subtitle: 'Dante 네트워크 구축 및 운영',
+                date: '2018',
+                description: '',
+                order: 7,
+                is_featured: true
+            }
+        ];
+
+        document.getElementById('importBtn').addEventListener('click', async function() {
+            if (!confirm('원본 이력서 데이터 51개 항목을 Import 하시겠습니까?\n\n※ 있는 그대로 Import됩니다 (추가/수정 없음)')) {
+                return;
+            }
+
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = 'Import 진행 중...';
+
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const status = document.getElementById('status');
+
+            progressContainer.style.display = 'block';
+            status.textContent = 'Import를 시작합니다...';
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (let i = 0; i < resumeData.length; i++) {
+                const item = resumeData[i];
+                const progress = Math.round(((i + 1) / resumeData.length) * 100);
+                
+                progressFill.style.width = progress + '%';
+                progressFill.textContent = progress + '%';
+                status.textContent = `${i + 1}/${resumeData.length} - ${item.title} Import 중...`;
+
+                try {
+                    const response = await fetch('tables/resume', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(item)
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                        console.error(`Failed to import: ${item.title}`);
+                    }
+                } catch (error) {
+                    failCount++;
+                    console.error(`Error importing ${item.title}:`, error);
+                }
+
+                // 서버 부하 방지를 위한 짧은 딜레이
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            progressFill.style.width = '100%';
+            progressFill.textContent = '100%';
+            
+            if (failCount === 0) {
+                status.className = 'status success';
+                status.innerHTML = `
+                    ✅ Import 완료!<br>
+                    성공: ${successCount}개 / 실패: ${failCount}개<br><br>
+                    <a href="admin-simple.html" class="link-btn">관리자 페이지에서 확인하기</a>
+                    <a href="resume.html" class="link-btn" style="background: #667eea; margin-left: 10px;">Resume 페이지 확인하기</a>
+                `;
+            } else {
+                status.className = 'status error';
+                status.innerHTML = `
+                    ⚠️ Import 완료 (일부 실패)<br>
+                    성공: ${successCount}개 / 실패: ${failCount}개<br><br>
+                    <a href="admin-simple.html" class="link-btn">관리자 페이지에서 확인하기</a>
+                `;
+            }
+
+            btn.textContent = 'Import 완료';
+        });
+    </script>
+</body>
+</html>
