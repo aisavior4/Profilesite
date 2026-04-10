@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,43 +8,245 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans KR', sans-serif; background: #f5f5f5; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 { margin-bottom: 30px; color: #333; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        .tab { padding: 12px 24px; background: white; border: none; cursor: pointer; border-radius: 6px; font-size: 14px; }
-        .tab.active { background: #d4a574; color: white; }
-        .section { display: none; background: white; padding: 30px; border-radius: 12px; }
-        .section.active { display: block; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 700; }
-        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 14px; }
-        textarea { min-height: 120px; resize: vertical; }
-        .btn { padding: 12px 24px; background: #d4a574; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; margin-right: 10px; }
-        .btn:hover { background: #c49463; }
-        .btn-secondary { background: #666; }
-        .btn-danger { background: #dc3545; }
-        .btn-sm { padding: 6px 12px; font-size: 12px; }
-        .alert { padding: 15px; margin-bottom: 20px; border-radius: 6px; display: none; }
-        .alert.show { display: block; }
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .items { display: block; margin-top: 30px; }
-        .item { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #e5e5e5; }
-        .item h3 { margin-bottom: 10px; font-size: 16px; color: #333; }
-        .item p { font-size: 13px; color: #666; margin-bottom: 8px; }
-        .item .actions { margin-top: 10px; }
-        .upload-area { border: 2px dashed #d4a574; padding: 40px; text-align: center; border-radius: 8px; cursor: pointer; background: #fafafa; margin-bottom: 20px; transition: all 0.3s; }
-        .upload-area:hover { background: #fff8f0; border-color: #c49463; }
-        #fileInput { display: none; }
-        .preview { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
-        .preview-item { position: relative; }
-        .preview img { width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 2px solid #e5e5e5; }
-        .preview-remove { position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 12px; }
-        .debug { background: #fff3cd; padding: 10px; margin: 10px 0; border-radius: 6px; font-size: 12px; font-family: monospace; }
-        .progress-bar { position: fixed; top: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; padding: 15px; text-align: center; z-index: 9999; display: none; font-size: 16px; }
-        .progress-bar.show { display: block; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .tab.active {
+            background: #d4a574;
+            color: white;
+        }
+
+        .section {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: #d4a574;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background: #c49463;
+        }
+
+        .btn-secondary {
+            background: #666;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .items {
+            display: block;
+            margin-top: 30px;
+        }
+
+        .item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+        }
+
+        .item h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .item p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .item .actions {
+            margin-top: 10px;
+        }
+
+        .upload-area {
+            border: 2px dashed #d4a574;
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #fafafa;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #fff8f0;
+            border-color: #c49463;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .preview {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .preview-item {
+            position: relative;
+        }
+
+        .preview img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid #e5e5e5;
+        }
+
+        .preview-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .debug {
+            background: #fff3cd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            z-index: 9999;
+            display: none;
+            font-size: 16px;
+        }
+
+        .progress-bar.show {
+            display: block;
+        }
+
         /* 🔐 Admin 비밀번호 보호 레이어 */
         #authOverlay {
             position: fixed;
@@ -57,6 +260,7 @@
             justify-content: center;
             z-index: 10000;
         }
+
         #authBox {
             background: white;
             padding: 40px;
@@ -65,11 +269,13 @@
             width: 90%;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
+
         #authBox h2 {
             margin-bottom: 20px;
             color: #333;
             text-align: center;
         }
+
         #authBox input {
             width: 100%;
             padding: 15px;
@@ -78,6 +284,7 @@
             border-radius: 8px;
             font-size: 16px;
         }
+
         #authBox button {
             width: 100%;
             padding: 15px;
@@ -89,27 +296,36 @@
             font-weight: 700;
             cursor: pointer;
         }
+
         #authBox button:hover {
             background: #c49463;
         }
+
         #authError {
             color: #dc3545;
             text-align: center;
             margin-top: 10px;
             display: none;
         }
+
         .auth-hidden {
             display: none !important;
         }
     </style>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+<script src="js/firebase-adapter.js"></script>
 </head>
+
 <body>
     <!-- 🔐 Admin 비밀번호 보호 -->
     <div id="authOverlay">
         <div id="authBox">
             <h2>🔐 Admin 로그인</h2>
             <p style="text-align: center; color: #666; margin-bottom: 20px;">관리자 페이지 접근을 위해 비밀번호를 입력하세요</p>
-            <input type="password" id="adminPassword" placeholder="비밀번호 입력" onkeypress="if(event.key==='Enter') checkAdminPassword()">
+            <input type="password" id="adminPassword" placeholder="비밀번호 입력"
+                onkeypress="if(event.key==='Enter') checkAdminPassword()">
             <button onclick="checkAdminPassword()">로그인</button>
             <div id="authError">❌ 비밀번호가 올바르지 않습니다</div>
         </div>
@@ -120,7 +336,7 @@
     </div>
     <div class="container" class="auth-hidden">
         <h1><i class="fas fa-cog"></i> Simple Admin Panel</h1>
-        
+
         <div class="tabs">
             <button class="tab active" onclick="showTab('gallery')">갤러리</button>
             <button class="tab" onclick="showTab('profile')">프로필 관리</button>
@@ -130,7 +346,9 @@
             <button class="tab" onclick="showTab('publications')">Publications & Media</button>
             <button class="tab" onclick="showTab('resume')">이력서</button>
             <button class="tab" onclick="showTab('board')">게시판</button>
-            <a href="index.html" style="padding: 12px 24px; background: #666; color: white; text-decoration: none; border-radius: 6px; display: inline-block;">사이트 보기</a>
+            <a href="index.html"
+                style="padding: 12px 24px; background: #666; color: white; text-decoration: none; border-radius: 6px; display: inline-block;">사이트
+                보기</a>
         </div>
 
         <div id="alertSuccess" class="alert alert-success"></div>
@@ -140,14 +358,15 @@
         <!-- Gallery Section -->
         <div id="gallery" class="section active">
             <h2 style="margin-bottom: 20px;">갤러리 이미지 관리</h2>
-            
+
             <div class="upload-area" id="uploadArea">
-                <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                <i class="fas fa-cloud-upload-alt"
+                    style="font-size: 48px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
                 <p style="font-size: 16px; margin-bottom: 5px;">클릭하여 이미지 선택</p>
                 <p style="font-size: 12px; color: #999;">또는 이미지를 드래그앤드롭</p>
             </div>
             <input type="file" id="fileInput" accept="image/*" multiple>
-            
+
             <div id="preview" class="preview"></div>
 
             <div class="form-group">
@@ -195,7 +414,8 @@
                     <option value="19">19</option>
                     <option value="20">20</option>
                 </select>
-                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">💡 1이 가장 앞에 표시됩니다. 같은 순서 선택 시 기존 항목이 자동으로 뒤로 밀립니다.</small>
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">💡 1이 가장 앞에 표시됩니다. 같은 순서
+                    선택 시 기존 항목이 자동으로 뒤로 밀립니다.</small>
             </div>
 
             <div class="form-group">
@@ -211,13 +431,15 @@
             <button class="btn btn-secondary" onclick="resetGallery()">
                 <i class="fas fa-times"></i> 취소
             </button>
-            <p id="editMode" style="display: none; color: #d4a574; font-weight: bold; margin-top: 10px;">✏️ 수정 모드: 이미지를 다시 선택하지 않으면 기존 이미지가 유지됩니다.</p>
+            <p id="editMode" style="display: none; color: #d4a574; font-weight: bold; margin-top: 10px;">✏️ 수정 모드: 이미지를
+                다시 선택하지 않으면 기존 이미지가 유지됩니다.</p>
 
             <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e5e5;">
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="margin: 0;">기존 이미지 (총 <span id="galleryCount">0</span>개)</h3>
-                <button class="btn btn-secondary" onclick="autoReorderGallery()" style="font-size: 14px; padding: 10px 20px;">
+                <button class="btn btn-secondary" onclick="autoReorderGallery()"
+                    style="font-size: 14px; padding: 10px 20px;">
                     <i class="fas fa-sort-numeric-down"></i> 순서 자동 정렬 (1, 2, 3...)
                 </button>
             </div>
@@ -241,7 +463,8 @@
 
             <div class="form-group">
                 <label>학력 3</label>
-                <input type="text" id="edu3" placeholder="예: Diploma, SAE (School of Audio Engineering), Sydney, Australia">
+                <input type="text" id="edu3"
+                    placeholder="예: Diploma, SAE (School of Audio Engineering), Sydney, Australia">
             </div>
 
             <div class="form-group">
@@ -251,7 +474,8 @@
 
             <div class="form-group">
                 <label>학력 5</label>
-                <input type="text" id="edu5" placeholder="예: Certificate IV, JMC Audio Engineering Academy, Sydney, Australia">
+                <input type="text" id="edu5"
+                    placeholder="예: Certificate IV, JMC Audio Engineering Academy, Sydney, Australia">
             </div>
 
             <button class="btn" onclick="saveAboutEducation()">
@@ -287,7 +511,8 @@
             <div class="form-group">
                 <label>아이콘 * (Font Awesome 클래스, 예: fa-headphones)</label>
                 <input type="text" id="expertiseIcon" placeholder="fa-headphones">
-                <small style="color: #999;">Font Awesome 아이콘: <a href="https://fontawesome.com/icons" target="_blank">https://fontawesome.com/icons</a></small>
+                <small style="color: #999;">Font Awesome 아이콘: <a href="https://fontawesome.com/icons"
+                        target="_blank">https://fontawesome.com/icons</a></small>
             </div>
 
             <div class="form-group">
@@ -324,9 +549,11 @@
                 </label>
             </div>
 
-            <div id="expertiseEditMode" style="display: none; background: #fff3cd; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+            <div id="expertiseEditMode"
+                style="display: none; background: #fff3cd; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
                 ✏️ 수정 모드
-                <button onclick="cancelEditExpertise()" style="float: right; background: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">취소</button>
+                <button onclick="cancelEditExpertise()"
+                    style="float: right; background: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">취소</button>
             </div>
 
             <button class="btn" onclick="saveExpertise()" id="saveExpertiseBtn">
@@ -337,11 +564,13 @@
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="margin: 0;">기존 Expertise (총 <span id="expertiseCount">0</span>개)</h3>
-                <button class="btn btn-secondary" onclick="autoReorderExpertise()" style="font-size: 14px; padding: 10px 20px;">
+                <button class="btn btn-secondary" onclick="autoReorderExpertise()"
+                    style="font-size: 14px; padding: 10px 20px;">
                     <i class="fas fa-sort-numeric-down"></i> 순서 자동 정렬 (1, 2, 3...)
                 </button>
             </div>
-            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+            <div
+                style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
                 <strong>💡 순서 자동 정렬 버튼:</strong> 현재 표시 순서대로 1, 2, 3... 으로 자동 재정렬합니다. (중복 순서 해결)
             </div>
             <div id="expertiseItems" class="items"></div>
@@ -391,10 +620,12 @@
             <h2 style="margin-bottom: 20px;">프로필 관리 (Hero & About Me)</h2>
             <p style="color: #666; margin-bottom: 30px;">메인 페이지의 Hero 배경, 제목, About Me 이미지 및 텍스트를 수정할 수 있습니다.</p>
 
-            <h3 style="margin: 30px 0 15px 0; border-bottom: 2px solid #d4a574; padding-bottom: 10px;">🖼️ Hero Section</h3>
-            
+            <h3 style="margin: 30px 0 15px 0; border-bottom: 2px solid #d4a574; padding-bottom: 10px;">🖼️ Hero Section
+            </h3>
+
             <div class="upload-area" id="heroUploadArea">
-                <i class="fas fa-image" style="font-size: 36px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                <i class="fas fa-image"
+                    style="font-size: 36px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
                 <p style="font-size: 14px;">Hero 배경 이미지 선택</p>
             </div>
             <input type="file" id="heroFileInput" accept="image/*">
@@ -410,10 +641,12 @@
                 <input type="text" id="heroSubtitle" placeholder="예: Audio Engineer & Music Producer">
             </div>
 
-            <h3 style="margin: 40px 0 15px 0; border-bottom: 2px solid #d4a574; padding-bottom: 10px;">👤 About Me Section</h3>
-            
+            <h3 style="margin: 40px 0 15px 0; border-bottom: 2px solid #d4a574; padding-bottom: 10px;">👤 About Me
+                Section</h3>
+
             <div class="upload-area" id="aboutUploadArea">
-                <i class="fas fa-user-circle" style="font-size: 36px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                <i class="fas fa-user-circle"
+                    style="font-size: 36px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
                 <p style="font-size: 14px;">About Me 프로필 이미지 선택</p>
             </div>
             <input type="file" id="aboutFileInput" accept="image/*">
@@ -426,7 +659,8 @@
 
             <div class="form-group">
                 <label>소개글 (HTML 지원)</label>
-                <textarea id="aboutBio" style="min-height: 200px;" placeholder="<p>음악학 박사, Dolby ATMOS & Pro Tools 마스터 트레이너</p>"></textarea>
+                <textarea id="aboutBio" style="min-height: 200px;"
+                    placeholder="<p>음악학 박사, Dolby ATMOS & Pro Tools 마스터 트레이너</p>"></textarea>
             </div>
 
             <button class="btn" onclick="saveProfile()">
@@ -440,7 +674,8 @@
             <p style="color: #666; margin-bottom: 30px;">논문, 전문서적, 기사, 미디어 등을 관리할 수 있습니다.</p>
 
             <div class="upload-area" id="pubUploadArea">
-                <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                <i class="fas fa-cloud-upload-alt"
+                    style="font-size: 48px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
                 <p style="font-size: 16px; margin-bottom: 5px;">클릭하여 이미지 선택</p>
                 <p style="font-size: 12px; color: #999;">또는 이미지를 드래그앤드롭 (다중 선택 가능)</p>
             </div>
@@ -496,7 +731,8 @@
                     <option value="14">14</option>
                     <option value="15">15</option>
                 </select>
-                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">💡 같은 순서 선택 시 기존 항목이 자동으로 뒤로 밀립니다.</small>
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">💡 같은 순서 선택 시 기존 항목이 자동으로
+                    뒤로 밀립니다.</small>
             </div>
 
             <div class="form-group">
@@ -518,7 +754,8 @@
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="margin: 0;">기존 Publications (총 <span id="pubCount">0</span>개)</h3>
-                <button class="btn btn-secondary" onclick="autoReorderPublications()" style="font-size: 14px; padding: 10px 20px;">
+                <button class="btn btn-secondary" onclick="autoReorderPublications()"
+                    style="font-size: 14px; padding: 10px 20px;">
                     <i class="fas fa-sort-numeric-down"></i> 순서 자동 정렬 (1, 2, 3...)
                 </button>
             </div>
@@ -564,7 +801,8 @@
 
             <div class="form-group">
                 <label>상세 설명 (HTML 지원)</label>
-                <textarea id="resumeDescription" style="min-height: 150px;" placeholder="<p>상세 내용을 입력하세요</p>&#10;<ul>&#10;  <li>항목 1</li>&#10;  <li>항목 2</li>&#10;</ul>"></textarea>
+                <textarea id="resumeDescription" style="min-height: 150px;"
+                    placeholder="<p>상세 내용을 입력하세요</p>&#10;<ul>&#10;  <li>항목 1</li>&#10;  <li>항목 2</li>&#10;</ul>"></textarea>
             </div>
 
             <div class="form-group">
@@ -605,7 +843,8 @@
                     <option value="112">112</option>
                     <option value="113">113</option>
                 </select>
-                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">💡 100번대는 줄 띄우기용. 같은 순서 선택 시 기존 항목이 자동으로 뒤로 밀립니다.</small>
+                <small style="color: #999; font-size: 12px; display: block; margin-top: 5px;">💡 100번대는 줄 띄우기용. 같은 순서 선택
+                    시 기존 항목이 자동으로 뒤로 밀립니다.</small>
             </div>
 
             <div class="form-group">
@@ -621,18 +860,21 @@
             <button class="btn btn-secondary" onclick="resetResume()">
                 <i class="fas fa-times"></i> 취소
             </button>
-            <p id="resumeEditMode" style="display: none; color: #d4a574; font-weight: bold; margin-top: 10px;">✏️ 수정 모드</p>
+            <p id="resumeEditMode" style="display: none; color: #d4a574; font-weight: bold; margin-top: 10px;">✏️ 수정 모드
+            </p>
 
             <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e5e5;">
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="margin: 0;">기존 이력 (총 <span id="resumeCount">0</span>개)</h3>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <button class="btn btn-secondary" onclick="autoReorderResume()" style="font-size: 14px; padding: 8px 16px;">
+                    <button class="btn btn-secondary" onclick="autoReorderResume()"
+                        style="font-size: 14px; padding: 8px 16px;">
                         <i class="fas fa-sort-numeric-down"></i> 순서 자동 정렬
                     </button>
                     <label style="font-size: 14px; color: #666;">카테고리 필터:</label>
-                    <select id="resumeFilter" onchange="filterResumeItems()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    <select id="resumeFilter" onchange="filterResumeItems()"
+                        style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
                         <option value="">전체 보기</option>
                         <option value="education">학력</option>
                         <option value="certification">국제공인 자격증</option>
@@ -647,9 +889,10 @@
                     </select>
                 </div>
             </div>
-            
+
             <!-- 일괄 삭제 버튼 -->
-            <div style="margin-bottom: 15px; padding: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; display: none;" id="bulkDeletePanel">
+            <div style="margin-bottom: 15px; padding: 12px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; display: none;"
+                id="bulkDeletePanel">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="font-weight: 600; color: #856404;">
                         <i class="fas fa-check-square"></i> <span id="selectedCount">0</span>개 항목 선택됨
@@ -658,16 +901,18 @@
                         <button onclick="selectAllResume()" class="btn" style="background: #6c757d; padding: 8px 16px;">
                             <i class="fas fa-check-double"></i> 전체 선택
                         </button>
-                        <button onclick="deselectAllResume()" class="btn" style="background: #6c757d; padding: 8px 16px;">
+                        <button onclick="deselectAllResume()" class="btn"
+                            style="background: #6c757d; padding: 8px 16px;">
                             <i class="fas fa-times"></i> 선택 해제
                         </button>
-                        <button onclick="bulkDeleteResume()" class="btn" style="background: #dc3545; padding: 8px 16px;">
+                        <button onclick="bulkDeleteResume()" class="btn"
+                            style="background: #dc3545; padding: 8px 16px;">
                             <i class="fas fa-trash-alt"></i> 선택 항목 삭제
                         </button>
                     </div>
                 </div>
             </div>
-            
+
             <div id="resumeItems" class="items"></div>
         </div>
 
@@ -687,8 +932,10 @@
 
             <div class="form-group">
                 <label>이미지 첨부 (선택사항)</label>
-                <div class="upload-area" id="boardUploadArea" style="padding: 30px; border: 2px dashed #ddd; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s;">
-                    <i class="fas fa-image" style="font-size: 36px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
+                <div class="upload-area" id="boardUploadArea"
+                    style="padding: 30px; border: 2px dashed #ddd; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s;">
+                    <i class="fas fa-image"
+                        style="font-size: 36px; color: #d4a574; margin-bottom: 10px; display: block;"></i>
                     <p style="font-size: 14px; margin: 0;">클릭하거나 이미지를 드래그하여 업로드</p>
                 </div>
                 <input type="file" id="boardFileInput" accept="image/*" style="display: none;">
@@ -724,11 +971,11 @@
     <script>
         // 🔐 Admin 비밀번호 보호
         const ADMIN_PASSWORD = 'admin2024'; // ⚠️ 원하는 비밀번호로 변경하세요!
-        
+
         function checkAdminPassword() {
             const input = document.getElementById('adminPassword');
             const password = input.value;
-            
+
             if (password === ADMIN_PASSWORD) {
                 // 비밀번호 맞음 - 세션 저장 & 오버레이 숨김
                 sessionStorage.setItem('adminAuth', 'true');
@@ -741,15 +988,15 @@
                 input.focus();
             }
         }
-        
+
         // 페이지 로드 시 인증 확인
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             if (sessionStorage.getItem('adminAuth') === 'true') {
                 document.getElementById('authOverlay').style.display = 'none';
                 document.querySelector('.container').classList.remove('auth-hidden');
             }
         });
-        
+
         let uploadedImages = [];
         let editingId = null;
 
@@ -860,9 +1107,9 @@
                     const originalSize = e.target.result.length;
                     const compressedSize = compressedDataUrl.length;
                     const reduction = ((1 - compressedSize / originalSize) * 100).toFixed(1);
-                    
+
                     log(`Image compressed: ${originalSize} → ${compressedSize} bytes (${reduction}% reduction)`);
-                    
+
                     if (compressedSize > 1500000) { // 1.5MB 초과 시 경고
                         log(`WARNING: Compressed size still large: ${(compressedSize / 1024 / 1024).toFixed(2)}MB`);
                     }
@@ -900,7 +1147,7 @@
         // Save Gallery (NEW - 수정/신규 모두 지원 + 진행률 표시)
         async function saveGallery() {
             log('=== saveGallery called ===');
-            
+
             const title = document.getElementById('title').value.trim();
             const category = document.getElementById('category').value;
             const description = document.getElementById('description').value.trim();
@@ -957,7 +1204,7 @@
 
                     const response = await fetch(`tables/gallery/${editingId}`, {
                         method: 'PATCH',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(updateData)
                     });
 
@@ -972,7 +1219,7 @@
                     resetGallery();
                     loadGalleryItems();
 
-                // **신규 추가 모드**
+                    // **신규 추가 모드**
                 } else {
                     progressBar.classList.add('show');
                     let successCount = 0;
@@ -993,7 +1240,7 @@
 
                         const response = await fetch('tables/gallery', {
                             method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(data)
                         });
 
@@ -1051,7 +1298,7 @@
 
                 if (data.data && data.data.length > 0) {
                     countEl.textContent = data.data.length;
-                    
+
                     // 카테고리 이름 매핑
                     const categories = {
                         studio: 'Sound Production',
@@ -1077,7 +1324,7 @@
 
                         // 순서대로 정렬
                         const sortedItems = grouped[category].sort((a, b) => (a.order || 0) - (b.order || 0));
-                        
+
                         sortedItems.forEach((item, index) => {
                             const div = document.createElement('div');
                             div.style.borderLeft = item.is_featured ? '4px solid #d4a574' : '4px solid #e5e5e5';
@@ -1085,11 +1332,11 @@
                             div.style.padding = '12px';
                             div.style.background = 'white';
                             div.style.borderRadius = '6px';
-                            
-                            const imgPreview = item.image_url && item.image_url.startsWith('data:') 
-                                ? `<img src="${item.image_url}" style="width: 120px; height: 80px; object-fit: cover; border-radius: 4px; margin-right: 15px;">` 
+
+                            const imgPreview = item.image_url && item.image_url.startsWith('data:')
+                                ? `<img src="${item.image_url}" style="width: 120px; height: 80px; object-fit: cover; border-radius: 4px; margin-right: 15px;">`
                                 : '';
-                            
+
                             div.innerHTML = `
                                 <div style="display: flex; align-items: center; gap: 15px;">
                                     ${imgPreview}
@@ -1131,17 +1378,17 @@
             try {
                 const response = await fetch(`tables/gallery/${id}`);
                 const item = await response.json();
-                
+
                 document.getElementById('title').value = item.title;
                 document.getElementById('category').value = item.category;
                 document.getElementById('description').value = item.description || '';
                 document.getElementById('order').value = item.order;
                 document.getElementById('featured').checked = item.is_featured;
-                
+
                 editingId = id;
                 document.getElementById('editMode').style.display = 'block';
                 document.getElementById('saveBtnText').textContent = '수정 저장';
-                
+
                 window.scrollTo(0, 0);
                 showAlert('success', '✏️ 수정 모드: 정보를 변경하고 저장하세요. (이미지 재선택 선택사항)');
             } catch (error) {
@@ -1176,24 +1423,24 @@
                 const response = await fetch('tables/gallery?limit=100&sort=order');
                 const data = await response.json();
                 const allItems = data.data || [];
-                
+
                 console.log(`📋 Found ${allItems.length} gallery items to reorder`);
-                
+
                 for (let i = 0; i < allItems.length; i++) {
                     const item = allItems[i];
                     const newOrder = i + 1;
-                    
+
                     if (item.order !== newOrder) {
                         console.log(`  📌 Reordering "${item.title}": ${item.order} → ${newOrder}`);
                         await fetch(`tables/gallery/${item.id}`, {
                             method: 'PATCH',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ order: newOrder })
                         });
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                 }
-                
+
                 progressBar.classList.remove('show');
                 showAlert('success', '갤러리 순서가 자동 정렬되었습니다!');
                 loadGalleryItems();
@@ -1258,7 +1505,7 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                        
+
                         log(`Image compressed: ${e.target.result.length} → ${compressedDataUrl.length} bytes`);
 
                         // Show preview
@@ -1315,7 +1562,7 @@
                     log(`Updating profile ${profileId}`);
                     response = await fetch(`tables/profile/${profileId}`, {
                         method: 'PATCH',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(profileData)
                     });
                 } else {
@@ -1323,7 +1570,7 @@
                     log('Creating new profile');
                     response = await fetch('tables/profile', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(profileData)
                     });
                 }
@@ -1336,7 +1583,7 @@
                 progressBar.classList.remove('show');
                 showAlert('success', '프로필이 저장되었습니다! 메인 페이지를 새로고침하여 확인하세요.');
                 log('Profile saved successfully');
-                
+
                 // Reset images
                 heroImage = '';
                 aboutImage = '';
@@ -1352,21 +1599,21 @@
             try {
                 const response = await fetch('tables/profile?limit=1');
                 const data = await response.json();
-                
+
                 if (data.data && data.data.length > 0) {
                     const profile = data.data[0];
                     document.getElementById('heroTitle').value = profile.hero_title || '';
                     document.getElementById('heroSubtitle').value = profile.hero_subtitle || '';
                     document.getElementById('aboutName').value = profile.about_name || '';
                     document.getElementById('aboutBio').value = profile.about_bio || '';
-                    
+
                     if (profile.hero_bg_image) {
                         document.getElementById('heroPreview').innerHTML = `<img src="${profile.hero_bg_image}" style="width: 200px; height: auto; border-radius: 8px; border: 2px solid #d4a574;">`;
                     }
                     if (profile.about_image) {
                         document.getElementById('aboutPreview').innerHTML = `<img src="${profile.about_image}" style="width: 200px; height: auto; border-radius: 8px; border: 2px solid #d4a574;">`;
                     }
-                    
+
                     log('Profile loaded successfully');
                 }
             } catch (error) {
@@ -1423,7 +1670,7 @@
                     log(`Updating resume item ${editingResumeId}`);
                     response = await fetch(`tables/resume/${editingResumeId}`, {
                         method: 'PATCH',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(resumeData)
                     });
                 } else {
@@ -1431,7 +1678,7 @@
                     log('Creating new resume item');
                     response = await fetch('tables/resume', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(resumeData)
                     });
                 }
@@ -1444,7 +1691,7 @@
                 progressBar.classList.remove('show');
                 showAlert('success', editingResumeId ? '이력이 수정되었습니다!' : '이력이 저장되었습니다!');
                 log('Resume saved successfully');
-                
+
                 resetResume();
                 loadResumeItems();
             } catch (error) {
@@ -1473,20 +1720,20 @@
             try {
                 const response = await fetch('tables/resume?limit=200&sort=order');
                 const data = await response.json();
-                
+
                 allResumeItems = data.data || [];
-                
+
                 console.log('========== RESUME DATA LOADED ==========');
                 console.log(`📊 Total items: ${allResumeItems.length}`);
                 console.log('📦 Raw data:', data);
-                
+
                 // 카테고리별 개수 출력
                 const categoryCounts = {};
                 allResumeItems.forEach(item => {
                     categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
                 });
                 console.log('📊 Category counts:', categoryCounts);
-                
+
                 renderResumeItems(allResumeItems);
             } catch (error) {
                 log(`Error loading resume: ${error.message}`);
@@ -1499,7 +1746,7 @@
             console.log('🔍 Filter selected:', filterValue);
             console.log('📦 Total items in allResumeItems:', allResumeItems.length);
             console.log('📊 All categories:', allResumeItems.map(item => item.category));
-            
+
             if (filterValue === '') {
                 renderResumeItems(allResumeItems);
             } else {
@@ -1523,54 +1770,54 @@
             if (items && items.length > 0) {
                 // 전체 항목 개수 표시 (필터와 관계없이)
                 countEl.textContent = allResumeItems.length;
-                    
-                    // 카테고리 이름 매핑
-                    const categories = {
-                        education: '학력',
-                        certification: '국제공인 자격증',
-                        experience: '사회경력',
-                        book: '저서',
-                        paper: '논문',
-                        project: '주요 정부사업 및 프로젝트',
-                        workshop: '음향과정 교육 워크샵',
-                        lecture: '그 외 특강',
-                        evaluation: '전문가 심의 및 평가활동',
-                        ncs: 'NCS 개발 및 심의, 교육경력'
-                    };
 
-                    // 카테고리별로 그룹화
-                    const grouped = {};
-                    items.forEach(item => {
-                        if (!grouped[item.category]) {
-                            grouped[item.category] = [];
-                        }
-                        grouped[item.category].push(item);
-                    });
+                // 카테고리 이름 매핑
+                const categories = {
+                    education: '학력',
+                    certification: '국제공인 자격증',
+                    experience: '사회경력',
+                    book: '저서',
+                    paper: '논문',
+                    project: '주요 정부사업 및 프로젝트',
+                    workshop: '음향과정 교육 워크샵',
+                    lecture: '그 외 특강',
+                    evaluation: '전문가 심의 및 평가활동',
+                    ncs: 'NCS 개발 및 심의, 교육경력'
+                };
 
-                    // 각 카테고리 렌더링
-                    console.log(`📁 Grouped categories:`, Object.keys(grouped).map(cat => `${cat}: ${grouped[cat].length}개`));
-                    
-                    Object.keys(grouped).forEach(category => {
-                        console.log(`🔹 Rendering category: ${category} (${grouped[category].length} items)`);
-                        
-                        const categoryDiv = document.createElement('div');
-                        categoryDiv.style.marginBottom = '30px';
-                        categoryDiv.innerHTML = `<h4 style="color: #d4a574; margin-bottom: 15px; font-size: 18px;">${categories[category] || category} (${grouped[category].length}개)</h4>`;
+                // 카테고리별로 그룹화
+                const grouped = {};
+                items.forEach(item => {
+                    if (!grouped[item.category]) {
+                        grouped[item.category] = [];
+                    }
+                    grouped[item.category].push(item);
+                });
 
-                        // 순서대로 정렬하여 렌더링
-                        const sortedItems = grouped[category].sort((a, b) => (a.order || 0) - (b.order || 0));
-                        console.log(`  → Sorted ${category}:`, sortedItems.map(item => `[${item.order}] ${item.title}`));
-                        
-                        sortedItems.forEach((item, index) => {
-                            const div = document.createElement('div');
-                            div.className = 'item';
-                            div.style.borderLeft = item.is_featured ? '4px solid #d4a574' : '4px solid #e5e5e5';
-                            div.style.marginBottom = '10px';
-                            div.style.padding = '12px';
-                            div.style.background = 'white';
-                            div.style.borderRadius = '6px';
-                            
-                            div.innerHTML = `
+                // 각 카테고리 렌더링
+                console.log(`📁 Grouped categories:`, Object.keys(grouped).map(cat => `${cat}: ${grouped[cat].length}개`));
+
+                Object.keys(grouped).forEach(category => {
+                    console.log(`🔹 Rendering category: ${category} (${grouped[category].length} items)`);
+
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.style.marginBottom = '30px';
+                    categoryDiv.innerHTML = `<h4 style="color: #d4a574; margin-bottom: 15px; font-size: 18px;">${categories[category] || category} (${grouped[category].length}개)</h4>`;
+
+                    // 순서대로 정렬하여 렌더링
+                    const sortedItems = grouped[category].sort((a, b) => (a.order || 0) - (b.order || 0));
+                    console.log(`  → Sorted ${category}:`, sortedItems.map(item => `[${item.order}] ${item.title}`));
+
+                    sortedItems.forEach((item, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'item';
+                        div.style.borderLeft = item.is_featured ? '4px solid #d4a574' : '4px solid #e5e5e5';
+                        div.style.marginBottom = '10px';
+                        div.style.padding = '12px';
+                        div.style.background = 'white';
+                        div.style.borderRadius = '6px';
+
+                        div.innerHTML = `
                                 <div style="display: flex; align-items: flex-start; gap: 15px;">
                                     <input type="checkbox" class="resume-checkbox" data-id="${item.id}" onchange="updateBulkDeletePanel()" style="width: 20px; height: 20px; cursor: pointer; flex-shrink: 0;">
                                     <div style="min-width: 40px; text-align: center; color: #d4a574; font-weight: bold; font-size: 16px;">${item.order || index + 1}</div>
@@ -1593,19 +1840,19 @@
                                     </div>
                                 </div>
                             `;
-                            categoryDiv.appendChild(div);
-                        });
-
-                        container.appendChild(categoryDiv);
-                        console.log(`✅ Category ${category} rendered successfully`);
+                        categoryDiv.appendChild(div);
                     });
-                    
-                    console.log('========== RENDERING COMPLETE ==========');
-                } else {
-                    console.log('⚠️ No items to render');
-                    countEl.textContent = '0';
-                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">이력이 없습니다. 위에서 추가해주세요.</p>';
-                }
+
+                    container.appendChild(categoryDiv);
+                    console.log(`✅ Category ${category} rendered successfully`);
+                });
+
+                console.log('========== RENDERING COMPLETE ==========');
+            } else {
+                console.log('⚠️ No items to render');
+                countEl.textContent = '0';
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">이력이 없습니다. 위에서 추가해주세요.</p>';
+            }
         }
 
         async function editResume(id) {
@@ -1613,7 +1860,7 @@
             try {
                 const response = await fetch(`tables/resume/${id}`);
                 const item = await response.json();
-                
+
                 document.getElementById('resumeCategory').value = item.category;
                 document.getElementById('resumeTitle').value = item.title;
                 document.getElementById('resumeSubtitle').value = item.subtitle || '';
@@ -1621,11 +1868,11 @@
                 document.getElementById('resumeDescription').value = item.description || '';
                 document.getElementById('resumeOrder').value = item.order;
                 document.getElementById('resumeFeatured').checked = item.is_featured;
-                
+
                 editingResumeId = id;
                 document.getElementById('resumeEditMode').style.display = 'block';
                 document.getElementById('saveResumeBtnText').textContent = '수정 저장';
-                
+
                 window.scrollTo(0, 0);
                 showAlert('success', '✏️ 수정 모드: 정보를 변경하고 저장하세요.');
             } catch (error) {
@@ -1653,7 +1900,7 @@
             const count = checkboxes.length;
             const panel = document.getElementById('bulkDeletePanel');
             const countEl = document.getElementById('selectedCount');
-            
+
             if (count > 0) {
                 panel.style.display = 'block';
                 countEl.textContent = count;
@@ -1680,25 +1927,25 @@
         async function bulkDeleteResume() {
             const checkboxes = document.querySelectorAll('.resume-checkbox:checked');
             const ids = Array.from(checkboxes).map(cb => cb.dataset.id);
-            
+
             if (ids.length === 0) {
                 showAlert('error', '삭제할 항목을 선택해주세요.');
                 return;
             }
-            
+
             if (!confirm(`선택한 ${ids.length}개 항목을 정말 삭제하시겠습니까?\n\n⚠️ 이 작업은 되돌릴 수 없습니다!`)) {
                 return;
             }
-            
+
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
-            
+
             progressBar.classList.add('show');
             progressText.textContent = `삭제 중... (0/${ids.length})`;
-            
+
             let successCount = 0;
             let errorCount = 0;
-            
+
             for (let i = 0; i < ids.length; i++) {
                 try {
                     progressText.textContent = `삭제 중... (${i + 1}/${ids.length})`;
@@ -1709,15 +1956,15 @@
                     errorCount++;
                 }
             }
-            
+
             progressBar.classList.remove('show');
-            
+
             if (errorCount > 0) {
                 showAlert('error', `삭제 완료: ${successCount}개 성공, ${errorCount}개 실패`);
             } else {
                 showAlert('success', `${successCount}개 항목이 삭제되었습니다!`);
             }
-            
+
             loadResumeItems();
             document.getElementById('bulkDeletePanel').style.display = 'none';
         }
@@ -1735,24 +1982,24 @@
                 const response = await fetch('tables/resume?limit=300&sort=order');
                 const data = await response.json();
                 const allItems = data.data || [];
-                
+
                 console.log(`📋 Found ${allItems.length} resume items to reorder`);
-                
+
                 for (let i = 0; i < allItems.length; i++) {
                     const item = allItems[i];
                     const newOrder = i + 1;
-                    
+
                     if (item.order !== newOrder) {
                         console.log(`  📌 Reordering "${item.title}": ${item.order} → ${newOrder}`);
                         await fetch(`tables/resume/${item.id}`, {
                             method: 'PATCH',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ order: newOrder })
                         });
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                 }
-                
+
                 progressBar.classList.remove('show');
                 showAlert('success', '이력서 순서가 자동 정렬되었습니다!');
                 loadResumeItems();
@@ -1770,7 +2017,7 @@
 
         // Board image upload
         const boardUploadArea = document.getElementById('boardUploadArea');
-        
+
         // Click to upload
         boardUploadArea.addEventListener('click', () => {
             document.getElementById('boardFileInput').click();
@@ -1793,7 +2040,7 @@
             e.preventDefault();
             boardUploadArea.style.background = '';
             boardUploadArea.style.borderColor = '';
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0 && files[0].type.startsWith('image/')) {
                 log(`Processing dropped board image: ${files[0].name}`);
@@ -1831,7 +2078,7 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                        
+
                         log(`Board image compressed: ${e.target.result.length} → ${compressedDataUrl.length} bytes`);
 
                         const preview = document.getElementById(previewId);
@@ -1886,7 +2133,7 @@
                     log(`Updating board post ${editingBoardId}`);
                     response = await fetch(`tables/board/${editingBoardId}`, {
                         method: 'PATCH',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                 } else {
@@ -1895,7 +2142,7 @@
                     log('Creating new board post');
                     response = await fetch('tables/board', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                 }
@@ -1942,18 +2189,18 @@
 
                 if (data.data && data.data.length > 0) {
                     countEl.textContent = data.data.length;
-                    
+
                     data.data.forEach(item => {
                         const div = document.createElement('div');
                         div.className = 'item';
-                        const imgPreview = item.image_url 
-                            ? `<img src="${item.image_url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; float: left; margin-right: 15px;">` 
+                        const imgPreview = item.image_url
+                            ? `<img src="${item.image_url}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; float: left; margin-right: 15px;">`
                             : '';
-                        
-                        const contentPreview = item.content && item.content.trim() 
+
+                        const contentPreview = item.content && item.content.trim()
                             ? (item.content.substring(0, 100) + (item.content.length > 100 ? '...' : ''))
                             : '<span style="color: #ff6b6b; font-weight: bold;">⚠️ 본문 없음 - 수정 필요!</span>';
-                        
+
                         div.innerHTML = `
                             ${imgPreview}
                             <h3>${item.title}</h3>
@@ -1989,26 +2236,26 @@
             try {
                 const response = await fetch(`tables/board/${id}`);
                 const item = await response.json();
-                
+
                 log(`Loaded board item:`, item);
                 log(`Content value:`, item.content);
                 log(`Content length:`, item.content?.length || 0);
-                
+
                 document.getElementById('boardTitle').value = item.title || '';
                 document.getElementById('boardContent').value = item.content || '';
                 document.getElementById('boardAuthor').value = item.author || '관리자';
                 document.getElementById('boardPinned').checked = item.is_pinned || false;
-                
+
                 // Show existing image if present
                 if (item.image_url) {
                     const preview = document.getElementById('boardPreview');
                     preview.innerHTML = `<img src="${item.image_url}" style="width: 200px; height: auto; border-radius: 8px; border: 2px solid #d4a574;">`;
                     boardImage = item.image_url; // Keep existing image
                 }
-                
+
                 editingBoardId = id;
                 window.scrollTo(0, 0);
-                
+
                 if (!item.content || item.content.trim() === '') {
                     showAlert('error', '⚠️ 경고: 이 게시글은 본문이 비어있습니다! 아래 "내용" 필드에 본문을 작성하고 저장해주세요.');
                 } else {
@@ -2025,7 +2272,7 @@
             try {
                 const response = await fetch(`tables/board/${id}`);
                 const item = await response.json();
-                
+
                 const content = `
                     <h2 style="margin-bottom: 20px;">${item.title}</h2>
                     <p style="color: #999; margin-bottom: 20px;">작성자: ${item.author} | 조회수: ${item.views || 0}</p>
@@ -2033,7 +2280,7 @@
                         ${item.content}
                     </div>
                 `;
-                
+
                 showAlert('success', content);
             } catch (error) {
                 log(`Error viewing board item: ${error.message}`);
@@ -2111,7 +2358,7 @@
 
                         const response = await fetch('tables/publications', {
                             method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(pubData)
                         });
 
@@ -2152,13 +2399,13 @@
                 if (editingPubId) {
                     response = await fetch(`tables/publications/${editingPubId}`, {
                         method: 'PATCH',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(pubData)
                     });
                 } else {
                     response = await fetch('tables/publications', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(pubData)
                     });
                 }
@@ -2170,7 +2417,7 @@
 
                 progressBar.classList.remove('show');
                 showAlert('success', editingPubId ? 'Publication이 수정되었습니다!' : 'Publication이 저장되었습니다!');
-                
+
                 resetPublication();
                 loadPublicationItems();
             } catch (error) {
@@ -2204,7 +2451,7 @@
 
                 if (data.data && data.data.length > 0) {
                     countEl.textContent = data.data.length;
-                    
+
                     const categories = { thesis: '논문 & 전문서적', article: '기사 & 미디어', other: '기타' };
                     const grouped = {};
                     data.data.forEach(item => {
@@ -2256,7 +2503,7 @@
             try {
                 const response = await fetch(`tables/publications/${id}`);
                 const item = await response.json();
-                
+
                 document.getElementById('pubCategory').value = item.category;
                 document.getElementById('pubTitle').value = item.title;
                 document.getElementById('pubDescription').value = item.description || '';
@@ -2264,7 +2511,7 @@
                 document.getElementById('pubLink').value = item.link || '';
                 document.getElementById('pubOrder').value = item.order || 1;
                 document.getElementById('pubFeatured').checked = item.is_featured || false;
-                
+
                 document.getElementById('pubEditMode').style.display = 'block';
                 document.getElementById('savePubBtnText').textContent = '수정 저장';
                 editingPubId = id;
@@ -2277,7 +2524,7 @@
 
         async function deletePublication(id) {
             if (!confirm('정말 삭제하시겠습니까?')) return;
-            
+
             try {
                 await fetch(`tables/publications/${id}`, { method: 'DELETE' });
                 showAlert('success', 'Publication이 삭제되었습니다!');
@@ -2300,24 +2547,24 @@
                 const response = await fetch('tables/publications?limit=100&sort=order');
                 const data = await response.json();
                 const allItems = data.data || [];
-                
+
                 console.log(`📋 Found ${allItems.length} publication items to reorder`);
-                
+
                 for (let i = 0; i < allItems.length; i++) {
                     const item = allItems[i];
                     const newOrder = i + 1;
-                    
+
                     if (item.order !== newOrder) {
                         console.log(`  📌 Reordering "${item.title}": ${item.order} → ${newOrder}`);
                         await fetch(`tables/publications/${item.id}`, {
                             method: 'PATCH',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ order: newOrder })
                         });
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                 }
-                
+
                 progressBar.classList.remove('show');
                 showAlert('success', 'Publications 순서가 자동 정렬되었습니다!');
                 loadPublicationItems();
@@ -2433,7 +2680,7 @@
 
                 if (data.data && data.data.length > 0) {
                     countEl.textContent = data.data.length;
-                    
+
                     data.data.forEach((item, index) => {
                         const div = document.createElement('div');
                         div.style.borderLeft = item.is_featured ? '4px solid #d4a574' : '4px solid #e5e5e5';
@@ -2441,9 +2688,9 @@
                         div.style.padding = '12px';
                         div.style.background = 'white';
                         div.style.borderRadius = '6px';
-                        
+
                         const tags = Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '';
-                        
+
                         div.innerHTML = `
                             <div style="display: flex; align-items: flex-start; gap: 15px;">
                                 <div style="font-size: 32px; color: #d4a574;"><i class="fas ${item.icon}"></i></div>
@@ -2506,13 +2753,13 @@
                 console.log('📋 Current items:', existingItems.map(item => `${item.title}: order ${item.order}`));
 
                 // Find all items that need to be shifted (EXCLUDING the item being edited)
-                const itemsToShift = existingItems.filter(item => 
+                const itemsToShift = existingItems.filter(item =>
                     item.order >= order && item.id !== editingExpertiseId
                 );
 
                 if (itemsToShift.length > 0) {
                     console.log(`⚠️ ${itemsToShift.length} items will be shifted down:`, itemsToShift.map(item => `${item.title} (${item.order})`));
-                    
+
                     // Step 1: Move items to temporary high order numbers (1000+) to avoid conflicts
                     console.log('🔄 Step 1: Moving items to temporary positions...');
                     for (let i = 0; i < itemsToShift.length; i++) {
@@ -2521,12 +2768,12 @@
                         console.log(`  📌 Temp: "${item.title}" ${item.order} → ${tempOrder}`);
                         await fetch(`tables/expertise/${item.id}`, {
                             method: 'PATCH',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ order: tempOrder })
                         });
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
-                    
+
                     // Step 2: Move items back to their final positions (original + 1)
                     console.log('🔄 Step 2: Moving items to final positions...');
                     for (const item of itemsToShift) {
@@ -2534,7 +2781,7 @@
                         console.log(`  ✅ Final: "${item.title}" → ${finalOrder}`);
                         await fetch(`tables/expertise/${item.id}`, {
                             method: 'PATCH',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ order: finalOrder })
                         });
                         await new Promise(resolve => setTimeout(resolve, 100));
@@ -2546,7 +2793,7 @@
                     console.log(`📝 Updating Expertise ID: ${editingExpertiseId}`, data);
                     const response = await fetch(`tables/expertise/${editingExpertiseId}`, {
                         method: 'PATCH',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                     const result = await response.json();
@@ -2556,7 +2803,7 @@
                     console.log('➕ Creating new Expertise:', data);
                     const response = await fetch('tables/expertise', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                     const result = await response.json();
@@ -2578,14 +2825,14 @@
             try {
                 const response = await fetch(`tables/expertise/${id}`);
                 const item = await response.json();
-                
+
                 document.getElementById('expertiseTitle').value = item.title;
                 document.getElementById('expertiseIcon').value = item.icon;
                 document.getElementById('expertiseDescription').value = item.description || '';
                 document.getElementById('expertiseTags').value = Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '';
                 document.getElementById('expertiseOrder').value = item.order || 1;
                 document.getElementById('expertiseFeatured').checked = item.is_featured || false;
-                
+
                 editingExpertiseId = id;
                 document.getElementById('expertiseEditMode').style.display = 'block';
                 document.getElementById('saveExpertiseBtnText').textContent = '수정 저장';
@@ -2635,24 +2882,24 @@
                 document.getElementById('progressText').textContent = '순서 자동 정렬 중...';
 
                 console.log('🔄 Starting auto-reorder...');
-                
+
                 // Get all items sorted by current order
                 const response = await fetch('tables/expertise?limit=100&sort=order');
                 const data = await response.json();
                 const allItems = data.data || [];
-                
+
                 console.log(`📋 Found ${allItems.length} items to reorder`);
-                
+
                 // Reorder sequentially (1, 2, 3, 4, ...)
                 for (let i = 0; i < allItems.length; i++) {
                     const item = allItems[i];
                     const newOrder = i + 1;
-                    
+
                     if (item.order !== newOrder) {
                         console.log(`  📌 Reordering "${item.title}": ${item.order} → ${newOrder}`);
                         await fetch(`tables/expertise/${item.id}`, {
                             method: 'PATCH',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ order: newOrder })
                         });
                         await new Promise(resolve => setTimeout(resolve, 100));
@@ -2660,7 +2907,7 @@
                         console.log(`  ✓ "${item.title}" already at order ${newOrder}`);
                     }
                 }
-                
+
                 console.log('✅ Auto-reorder completed!');
                 progressBar.classList.remove('show');
                 showAlert('success', '순서가 1, 2, 3... 으로 자동 정렬되었습니다! 메인 페이지를 새로고침하세요.');
@@ -2679,7 +2926,7 @@
             try {
                 const response = await fetch('tables/about_education?limit=1');
                 const data = await response.json();
-                
+
                 if (data.data && data.data.length > 0) {
                     const item = data.data[0];
                     document.getElementById('edu1').value = item.edu1 || '';
@@ -2720,7 +2967,7 @@
                     const existingId = checkData.data[0].id;
                     await fetch(`tables/about_education/${existingId}`, {
                         method: 'PATCH',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                     showAlert('success', '학력이 수정되었습니다! 메인 페이지를 새로고침하세요.');
@@ -2728,7 +2975,7 @@
                     // Create new record
                     await fetch('tables/about_education', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                     showAlert('success', '학력이 저장되었습니다! 메인 페이지를 새로고침하세요.');
@@ -2749,18 +2996,18 @@
                 const response = await fetch('tables/resume_header?limit=1');
                 const data = await response.json();
                 const currentDiv = document.getElementById('resumeHeaderCurrent');
-                
+
                 if (data.data && data.data.length > 0) {
                     const item = data.data[0];
-                    
+
                     document.getElementById('resumeHeaderName').value = item.name || '';
                     document.getElementById('resumeHeaderTitle').value = item.title || '';
                     document.getElementById('resumeHeaderSkillsLeft').value = Array.isArray(item.skills_left) ? item.skills_left.join(', ') : '';
                     document.getElementById('resumeHeaderSkillsRight').value = Array.isArray(item.skills_right) ? item.skills_right.join(', ') : '';
-                    
+
                     const leftSkills = Array.isArray(item.skills_left) ? item.skills_left : [];
                     const rightSkills = Array.isArray(item.skills_right) ? item.skills_right : [];
-                    
+
                     currentDiv.innerHTML = `
                         <h4 style="margin-bottom: 15px;">현재 설정</h4>
                         <p><strong>이름:</strong> ${item.name || '-'}</p>
@@ -2802,13 +3049,13 @@
                     const headerId = checkData.data[0].id;
                     await fetch(`tables/resume_header/${headerId}`, {
                         method: 'PATCH',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                 } else {
                     await fetch('tables/resume_header', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                 }
@@ -2834,4 +3081,5 @@
         loadBoardItems();
     </script>
 </body>
+
 </html>

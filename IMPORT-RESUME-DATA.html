@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Data Import Tool - 임형준</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #374151;
+            line-height: 1.8;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .warning-box p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        #progress {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .log-item {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .log-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .log-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .log-info {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .summary {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #10b981;
+        }
+
+        .summary h3 {
+            color: #059669;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #6b7280;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Resume Data Import Tool</h1>
+        <p class="subtitle">하드코딩된 이력서 데이터를 데이터베이스로 자동 Import</p>
+
+        <div class="info-box">
+            <h3>📋 Import 항목 (총 40개 이상)</h3>
+            <ul>
+                <li><strong>학력 (5개)</strong>: 박사, 석사, Certificate IV, Diploma, Advanced Certificate</li>
+                <li><strong>국제공인 자격증 (13개)</strong>: Dolby ATMOS, Pro Tools, Cubase, Dante 등</li>
+                <li><strong>사회경력 (22개)</strong>: 한국음향학회, 협회, 교육기관 등</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <h3>⚠️ 주의사항</h3>
+            <p>이 작업은 <strong>기존 데이터에 추가</strong>됩니다. 중복 방지를 위해 <strong>한 번만 실행</strong>해주세요.</p>
+        </div>
+
+        <button class="btn btn-primary" id="startBtn" onclick="startImport()">
+            <i class="fas fa-database"></i> Import 시작하기
+        </button>
+
+        <button class="btn btn-secondary" onclick="window.location.href='admin-simple.html'">
+            관리자 페이지로 이동
+        </button>
+
+        <div id="progress"></div>
+    </div>
+
+    <script>
+        let importCount = 0;
+        let errorCount = 0;
+
+        const resumeData = {
+            education: [
+                { title: '음악학 박사', subtitle: '실용음악 전공 | 세종대학교 일반대학원 음악학과', order: 1, is_featured: true },
+                { title: '실용음악학 석사', subtitle: '뮤직프로듀싱 전공 | 추계예술대 문화예술대학원 컨템포러리뮤직 학과', order: 2, is_featured: false },
+                { title: 'Certificate IV', subtitle: 'Audio Engineering & Sound Production | SAE, Sydney, Australia', order: 3, is_featured: false },
+                { title: 'Diploma', subtitle: 'Audio Engineering & Post production | SAE, Sydney, Australia', order: 4, is_featured: false },
+                { title: 'Advanced Certificate', subtitle: 'Audio Engineering | JMC Audio Engineering Academy, Sydney, Australia', order: 5, is_featured: false }
+            ],
+            certification: [
+                { title: 'Dolby ATMOS Pro Tools Certified Instructor II', subtitle: '전세계 33인 중 1인', order: 1, is_featured: true },
+                { title: 'Dolby ATMOS Pro Tools Certified Instructor', order: 2, is_featured: true },
+                { title: 'Dolby ATMOS Certified Professional', order: 3, is_featured: true },
+                { title: 'Pro Tools Certified Instructor 2024-2026', order: 4, is_featured: true },
+                { title: 'Pro Tools Specialist 2022', order: 5, is_featured: false },
+                { title: 'Pro Tools Version 2020 / 2021 Certified Instructor', order: 6, is_featured: false },
+                { title: 'Pro Tools Version 2020 Certified User', order: 7, is_featured: false },
+                { title: 'Pro Tools Version 12 Certified Instructor', order: 8, is_featured: false },
+                { title: 'Pro Tools Version 12 Certified User', order: 9, is_featured: false },
+                { title: 'Cubase Certified Master', subtitle: 'Steinberg 사 국제공인 Cubase 검정위원회 심의위원', order: 10, is_featured: true },
+                { title: 'Dante International Trainer', subtitle: '국내 5인 중 1인', order: 11, is_featured: true },
+                { title: 'Dante Certification Level 2', order: 12, is_featured: false },
+                { title: 'Dante Certification Level 1', order: 13, is_featured: false }
+            ],
+            experience: [
+                { title: '사단법인 한국 음향학회', subtitle: '현 산학협동 이사', date: '2023~현재', order: 1, is_featured: true },
+                { title: '사단법인 한국 음향예술인 협회', subtitle: '제9대 회장', date: '2018~2022', order: 2, is_featured: false },
+                { title: '사단법인 한국 음향예술인 협회', subtitle: '기획이사', date: '2007~2018', order: 3, is_featured: false },
+                { title: '사단법인 한국 음악스튜디오 협회', subtitle: '부회장', date: '2011~2020', order: 4, is_featured: false },
+                { title: '세계음악학회', subtitle: '정회원', date: '2023~현재', order: 5, is_featured: true },
+                { title: '세종대학교 음악학과', subtitle: '레코딩, 믹싱, 음향 출강', date: '2023~현재', order: 6, is_featured: true },
+                { title: '세종대학교 융합대학원', subtitle: '음향 출강', date: '2025~현재', order: 7, is_featured: true },
+                { title: '한국영상대학교 음향제작과', subtitle: '겸임교수', date: '2024~현재', order: 8, is_featured: true },
+                { title: 'SJA Music Institute', subtitle: '음향 강사', date: '2025~현재', order: 9, is_featured: true },
+                { title: '세종대학교 일반대학원 음악학과', subtitle: '컴퓨터음악 출강 (예정)', date: '2025~', order: 10, is_featured: false },
+                { title: '서울종합예술실용학교', subtitle: '뮤직프로듀싱 교수', date: '2003~2020', order: 11, is_featured: false },
+                { title: '미디어 라인 아트센터', subtitle: '음향 교수', date: '2016~2017', order: 12, is_featured: false },
+                { title: '학교법인 인덕학원 인덕대학', subtitle: '실용음악 겸임교수', date: '2012~2016', order: 13, is_featured: false },
+                { title: '학교법인 추계학원 추계예술대 평생교육원', subtitle: '교수', date: '2008~2012', order: 14, is_featured: false },
+                { title: '학교법인 백제학원 백제예술대학 방송음악과', subtitle: '레코딩, 믹싱 외래교수', date: '2005~2009', order: 15, is_featured: false },
+                { title: '학교법인 서정학원 수원여자대학교 방송연예영상학부', subtitle: '음향/레코딩 교수', date: '2007~2008', order: 16, is_featured: false },
+                { title: '학교법인 동남학원 청강문화산업대학 음악콘텐츠스쿨', subtitle: '음향 기술', date: '2003~2007', order: 17, is_featured: false },
+                { title: '학교법인 동남학원 청강문화산업대학 코디네이터실', subtitle: '정보화팀장', date: '2003~2005', order: 18, is_featured: false },
+                { title: '음악학 박사 학위 논문', subtitle: '\'디지털 음향 워크스테이션 비교 분석 연구\' 학회지 인용', date: '2023', order: 19, is_featured: false },
+                { title: '한국음향예술인협회 학술분야', subtitle: '음향 관련 논문, 저서 등 15개 발표', date: '2020~2023', order: 20, is_featured: false },
+                { title: 'CJ CGV 전국 극장', subtitle: '음향품질 정기 검수 전문가 활동', date: '2015~2019', order: 21, is_featured: false },
+                { title: '사단법인 한국음향예술인협회', subtitle: '음향기술자격증 교육 및 출제, 주관 업무', date: '2007~2022', order: 22, is_featured: false }
+            ]
+        };
+
+        function log(message, type = 'info') {
+            const progressDiv = document.getElementById('progress');
+            progressDiv.style.display = 'block';
+            
+            const logItem = document.createElement('div');
+            logItem.className = `log-item log-${type}`;
+            logItem.textContent = message;
+            
+            progressDiv.appendChild(logItem);
+            progressDiv.scrollTop = progressDiv.scrollHeight;
+        }
+
+        async function createResumeItem(category, item) {
+            try {
+                const data = {
+                    category: category,
+                    title: item.title,
+                    subtitle: item.subtitle || '',
+                    date: item.date || '',
+                    description: item.description || '',
+                    order: item.order,
+                    is_featured: item.is_featured || false
+                };
+
+                const response = await fetch('tables/resume', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                importCount++;
+                log(`✅ [${category}] ${item.title}`, 'success');
+                return true;
+            } catch (error) {
+                errorCount++;
+                log(`❌ [${category}] ${item.title} - ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function startImport() {
+            const btn = document.getElementById('startBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Import 진행 중...';
+
+            importCount = 0;
+            errorCount = 0;
+
+            log('🚀 Resume Data Import 시작', 'info');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+
+            // Import Education
+            log('📚 학력 Import 중...', 'info');
+            for (const item of resumeData.education) {
+                await createResumeItem('education', item);
+                await sleep(200);
+            }
+
+            // Import Certifications
+            log('🏆 자격증 Import 중...', 'info');
+            for (const item of resumeData.certification) {
+                await createResumeItem('certification', item);
+                await sleep(200);
+            }
+
+            // Import Experience
+            log('💼 경력 Import 중...', 'info');
+            for (const item of resumeData.experience) {
+                await createResumeItem('experience', item);
+                await sleep(200);
+            }
+
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+            log(`✨ Import 완료!`, 'success');
+
+            showSummary();
+
+            btn.textContent = 'Import 완료';
+            btn.style.background = '#10b981';
+        }
+
+        function showSummary() {
+            const progressDiv = document.getElementById('progress');
+            const summary = document.createElement('div');
+            summary.className = 'summary';
+            summary.innerHTML = `
+                <h3>📊 Import 요약</h3>
+                <div class="summary-item">
+                    <span class="summary-label">총 시도</span>
+                    <span class="summary-value">${importCount + errorCount}개</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">성공</span>
+                    <span class="summary-value" style="color: #10b981;">${importCount}개</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">실패</span>
+                    <span class="summary-value" style="color: #ef4444;">${errorCount}개</span>
+                </div>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+                    <a href="resume.html" style="display: block; text-align: center; padding: 12px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
+                        📄 Resume 페이지 확인하기
+                    </a>
+                    <a href="admin-simple.html" style="display: block; text-align: center; padding: 12px; background: white; color: #667eea; text-decoration: none; border-radius: 6px; font-weight: 600; margin-top: 10px; border: 2px solid #667eea;">
+                        ⚙️ 관리자 페이지에서 수정하기
+                    </a>
+                </div>
+            `;
+            progressDiv.appendChild(summary);
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>
