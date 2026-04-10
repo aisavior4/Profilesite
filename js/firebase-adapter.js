@@ -16,24 +16,23 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const db = firebase.firestore();
-const storage = firebase.storage();
+// 🚨 구글의 카드 등록을 요구하는 Storage는 이제 아예 쓰지 않습니다! 🚨
 
-console.log("🚀 파이어베이스 마법 어댑터 작동 시작!");
+console.log("🚀 파이어베이스 마법 어댑터 작동 시작! (Storage 우회 완료)");
 
-// 3. 기존 젠스파크 fetch 가로채기 (핵심 기술!)
+// 3. 기존 젠스파크 fetch 가로채기
 const originalFetch = window.fetch;
 window.fetch = async function() {
     let resource = arguments[0];
     let config = arguments[1];
     
-    // 젠스파크 서버로 가는 요청을 납치해서 파이어베이스로 보냅니다.
     if (typeof resource === 'string' && resource.startsWith('tables/')) {
         return handleFirebaseRequest(resource, config);
     }
     return originalFetch.apply(this, arguments);
 };
 
-// 4. 파이어베이스 처리 로직
+// 4. 파이어베이스 처리 로직 (이미지를 텍스트로 압축해서 무료 DB에 다이렉트로 꽂아버림!)
 async function handleFirebaseRequest(resource, config) {
     const url = new URL(resource, window.location.origin);
     const pathParts = url.pathname.replace(/^\//, '').split('/');
@@ -66,7 +65,6 @@ async function handleFirebaseRequest(resource, config) {
             }
         } 
         else if (method === 'POST') {
-            await processImages(collectionName, body);
             let newDoc;
             if (body.id) {
                 await db.collection(collectionName).doc(body.id).set(body);
@@ -78,7 +76,6 @@ async function handleFirebaseRequest(resource, config) {
             return fakeResponse(newDoc);
         } 
         else if (method === 'PATCH' || method === 'PUT') {
-            await processImages(collectionName, body);
             await db.collection(collectionName).doc(docId).set(body, { merge: true });
             return fakeResponse({ id: docId, ...body });
         } 
@@ -97,24 +94,4 @@ function fakeResponse(data, status = 200) {
         status: status,
         headers: { 'Content-Type': 'application/json' }
     });
-}
-
-// 이미지 파일을 파이어베이스 Storage에 안전하게 저장하는 함수
-async function processImages(collectionName, body) {
-    if (!body) return;
-    
-    const uploadBase64 = async (base64Str) => {
-        if (!base64Str.startsWith('data:image')) return base64Str;
-        const fileName = `uploads/${collectionName}/${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
-        const storageRef = storage.ref().child(fileName);
-        await storageRef.putString(base64Str, 'data_url');
-        return await storageRef.getDownloadURL();
-    };
-    
-    const imageFields = ['image_url', 'hero_bg_image', 'about_image', 'profile_image'];
-    for (const field of imageFields) {
-        if (body[field] && body[field].startsWith('data:image')) {
-            body[field] = await uploadBase64(body[field]);
-        }
-    }
 }
