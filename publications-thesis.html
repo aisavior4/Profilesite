@@ -5,16 +5,29 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="js/firebase-adapter.js"></script>
 <style>
-    body, .item-content, p, h1, h2, h3, h4, h5, h6, span, div, a {
+    /* 1. 배경색과 전체 폭 설정 */
+    body {
+        background-color: #000000 !important;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 2. 모든 컨테이너의 폭을 800px로 강제 제한 */
+    .container, .publication-container, main, section, .item-detail-container {
+        max-width: 800px !important;
+        margin: 40px auto !important; /* 위아래 여백 40px, 좌우 가운데 정렬 */
+        padding: 20px !important;
+        width: 95% !important; /* 모바일에서 꽉 차지 않게 */
+        border: 1px solid #444 !important; /* 빨간 선이 싫으시면 이걸로 바꾸세요! */
+    }
+
+    /* 3. 글자색 하얗게 구출 */
+    * {
         color: #dddddd !important;
+        line-height: 1.8 !important; /* 줄간격을 넓혀서 읽기 편하게 */
     }
-    strong, h1, h2, h3 {
+    h1, h2, h3, strong {
         color: #ffffff !important;
-    }
-    /* 👇 좌우 폭을 줄여주는 코드 추가 👇 */
-    .container {
-        max-width: 800px !important; /* 폭을 800px로 제한 (더 좁히려면 700px 등으로 수정) */
-        margin: 0 auto !important; /* 화면 한가운데로 정렬 */
     }
 </style>
 
