@@ -6,10 +6,15 @@
 <script src="js/firebase-adapter.js"></script>
 <style>
     body, .item-content, p, h1, h2, h3, h4, h5, h6, span, div, a {
-        color: #dddddd !important; /* 전체적으로 밝은 회색 적용 */
+        color: #dddddd !important;
     }
     strong, h1, h2, h3 {
-        color: #ffffff !important; /* 제목이나 강조된 글씨는 완전한 흰색 적용 */
+        color: #ffffff !important;
+    }
+    /* 👇 좌우 폭을 줄여주는 코드 추가 👇 */
+    .container {
+        max-width: 800px !important; /* 폭을 800px로 제한 (더 좁히려면 700px 등으로 수정) */
+        margin: 0 auto !important; /* 화면 한가운데로 정렬 */
     }
 </style>
 <head>
