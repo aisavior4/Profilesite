@@ -5,55 +5,61 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="js/firebase-adapter.js"></script>
 <style>
-    /* 1. 전체 바닥 배경을 흰색으로 고정 */
-    html, body {
+    /* 1. 상단 여백 조절 (3번 문제 해결: 제목과 썸네일 간격) */
+    body {
         background-color: #ffffff !important;
-        background: #ffffff !important;
-        color: #1a1a1a !important;
+        padding-top: 60px !important; /* 100px에서 60px로 줄여서 간격을 좁혔습니다 */
     }
 
-    /* 2. 문제의 '검은 방'을 찾아내서 흰색 반투명으로 강제 전환 */
-    /* 상세 페이지의 모든 가능성 있는 박스들을 다 잡습니다 */
-    div[class*="detail"], 
-    div[class*="content"], 
-    section, 
-    article, 
-    .modal-content, 
-    .item-detail-container {
-        background-color: rgba(255, 255, 255, 0.96) !important; /* 흰색 96% 반투명 */
-        background-image: none !important; /* 혹시 깔려있을지 모를 어두운 이미지 제거 */
+    /* 2. 상세 페이지 '까마귀' 탈출 (2번 문제 해결: 흰 배경 + 검정 글씨) */
+    /* 상세 보기 시 나타나는 검은 배경을 강제로 하얀 반투명으로 바꿉니다 */
+    .lightbox, 
+    .item-detail-overlay,
+    #lightbox {
+        background-color: rgba(255, 255, 255, 0.98) !important;
     }
 
-    /* 3. 글씨색을 '진한 검정'으로 박멸 (암실 속 까마귀 탈출) */
-    * {
-        color: #1a1a1a !important; 
-        text-shadow: none !important; /* 글씨 주변의 어두운 그림자 제거 */
-    }
-
-    /* 4. 제목과 강조 텍스트는 더 진하게 */
-    h1, h2, h3, h4, h5, h6, strong, b {
-        color: #000000 !important;
-        font-weight: 800 !important;
-    }
-
-    /* 5. 가독성을 위한 레이아웃 보정 (폭 제한 및 여백) */
-    .container, 
-    .item-detail-container, 
-    main {
-        max-width: 850px !important;
+    /* 상세 설명이 들어가는 박스 폭 제한 및 색상 설정 */
+    .lightbox-content, 
+    .item-detail-container,
+    .lightbox-caption {
+        max-width: 800px !important; /* 문장 폭을 800px로 제한 */
         margin: 0 auto !important;
-        padding-top: 50px !important;
-        padding-bottom: 50px !important;
+        background: transparent !important;
     }
 
-    /* 6. 이미지(논문 표지 등)가 잘 보이게 테두리 살짝 추가 */
-    img {
-        max-width: 100% !important;
-        height: auto !important;
-        border: 1px solid #eeeeee;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        margin: 20px auto !important;
-        display: block;
+    /* 상세 페이지 내의 모든 글씨를 진한 검정색으로 */
+    .lightbox-caption h3, 
+    .lightbox-caption p,
+    #lightboxTitle,
+    #lightboxDescription {
+        color: #000000 !important;
+        text-shadow: none !important;
+        line-height: 1.8 !important;
+        text-align: left !important; /* 글씨를 왼쪽 정렬해서 읽기 편하게 */
+    }
+
+    /* 3. 썸네일 마우스 오버 가독성 (1번 문제 해결) */
+    /* 마우스 올렸을 때 올라오는 검은 반투명 띠 위의 글씨는 하얀색으로 유지 */
+    .gallery-item .item-info,
+    .gallery-item .overlay,
+    .category-info h3,
+    .category-info p {
+        color: #ffffff !important; /* 여기는 배경이 어두우니 글씨가 하얀색이어야 합니다 */
+    }
+
+    /* 4. 공통 섹션 제목 스타일 */
+    .section-title {
+        color: #1a1a1a !important;
+        margin-top: 20px !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* 5. 이미지 테두리 (논문 표지 강조) */
+    .lightbox-content img {
+        border: 1px solid #eeeeee !important;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.1) !important;
+        border-radius: 5px !important;
     }
 </style>
 <head>
