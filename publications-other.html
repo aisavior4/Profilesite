@@ -5,29 +5,43 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="js/firebase-adapter.js"></script>
 <style>
-    /* 1. 배경색과 전체 폭 설정 */
+    /* 1. 배경을 다시 밝은 색으로 (논문 표지 시인성 확보) */
     body {
-        background-color: #000000 !important;
-        margin: 0;
-        padding: 0;
+        background-color: #ffffff !important;
+        /* 제목이 상단 바에 가려지지 않게 여백 추가 */
+        padding-top: 120px !important; 
     }
 
-    /* 2. 모든 컨테이너의 폭을 800px로 강제 제한 */
-    .container, .publication-container, main, section, .item-detail-container {
+    /* 2. 글자색을 다시 가독성 좋은 어두운 색으로 */
+    body, .item-content, p, h1, h2, h3, h4, h5, h6, span, div, a {
+        color: #333333 !important;
+    }
+
+    /* 3. 개별 항목 클릭 시 나오는 상세 내용 폭 제한 및 가운데 정렬 */
+    /* .container와 .item-content 등 주요 박스들의 폭을 800px로 모읍니다 */
+    .container, 
+    .item-detail-container, 
+    .item-content, 
+    .section-header {
         max-width: 800px !important;
-        margin: 40px auto !important; /* 위아래 여백 40px, 좌우 가운데 정렬 */
-        padding: 20px !important;
-        width: 95% !important; /* 모바일에서 꽉 차지 않게 */
-        border: 1px solid #444 !important; /* 빨간 선이 싫으시면 이걸로 바꾸세요! */
+        margin: 0 auto !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
     }
 
-    /* 3. 글자색 하얗게 구출 */
-    * {
-        color: #dddddd !important;
-        line-height: 1.8 !important; /* 줄간격을 넓혀서 읽기 편하게 */
+    /* 4. 이미지들이 너무 커지지 않게 조절 */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 8px;
+        margin-bottom: 20px;
     }
-    h1, h2, h3, strong {
-        color: #ffffff !important;
+
+    /* 5. 상단 제목(논문 및 전문서적 등) 스타일 교정 */
+    .section-title {
+        color: #1a1a1a !important;
+        text-align: center;
+        margin-bottom: 40px !important;
     }
 </style>
 <head>
