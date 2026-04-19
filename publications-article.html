@@ -8,7 +8,13 @@
     /* 1. 기본 배경 및 상단 여백 (제목 짤림 방지) */
     body {
         background-color: #ffffff !important;
-        padding-top: 100px !important;
+        padding-top: 100px !important; /* 형준님 튜닝 수치 유지 */
+    }
+
+    /* 🔥 [추가됨] 상단 'Back to Gallery' 문구와 사진 사이의 광활한 여백 줄이기 */
+    .section-header, .section-title {
+        margin-top: 0 !important;
+        margin-bottom: 10px !important;
     }
 
     /* 2. 라이트박스(상세보기) 전체 영역 설정 */
@@ -31,13 +37,14 @@
 
     /* 3. 상세 내용 박스 (폭 제한 및 가시성 확보) */
     .lightbox-content {
-        max-width: 500px !important; /* 문장 폭 줄이기 */
-        width: 70% !important;
-        margin: 80px auto !important;
+        max-width: 500px !important; /* 형준님 튜닝 수치 유지 */
+        width: 70% !important; /* 형준님 튜닝 수치 유지 */
+        /* 🔥 [수정됨] margin 상단을 80px에서 20px로 줄여서 위로 확 끌어올림 */
+        margin: 20px auto 80px auto !important; 
         background: white !important;
-        padding: 50px !important;
+        padding: 50px !important; /* 형준님 튜닝 수치 유지 */
         display: block !important; /* 내용 강제 노출 */
-        opacity: 3 !important;
+        opacity: 1 !important; /* CSS 최대치인 1로 교정 */
         position: relative !important;
     }
 
@@ -51,18 +58,24 @@
         box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
 
-    .lightbox-caption {
+    /* 🔥 [수정됨] 완벽한 왼쪽 정렬 및 가독성 확보 (오른쪽 붙임 현상 해결) */
+    .lightbox-caption, #lightboxDescription, .lightbox-caption p {
         text-align: left !important;
-    }
-
-    #lightboxTitle, #lightboxDescription, .lightbox-caption h3, .lightbox-caption p {
         color: #1a1a1a !important; /* 진한 검정색 */
         line-height: 1.8 !important;
         text-shadow: none !important;
         display: block !important;
+        width: 100% !important; /* 텍스트가 오른쪽으로 뭉치지 않게 꽉 채움 */
     }
 
-    /* 5. 이전/다음 버튼 - 상세 내용 하단 중앙에 배치 */
+    #lightboxTitle, .lightbox-caption h3 {
+        text-align: left !important;
+        color: #000000 !important;
+        font-weight: 700 !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* 5. 이전/다음 버튼 - 상세 내용 하단 중앙에 배치 (형준님 튜닝 수치 유지) */
     .lightbox-prev, .lightbox-next {
         position: fixed !important; /* 화면 하단에 고정 */
         bottom: 30px !important;
