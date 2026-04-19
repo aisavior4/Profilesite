@@ -17,12 +17,9 @@
 
     /* 🔥 2. 제목과 아래 사진들 사이의 거대 여백 줄이기 (사진의 'O' 부분 해결) */
     .section-header {
-        margin-bottom: 30px !important; /* 원래 64px(4rem)이던 간격을 반으로 확 줄였습니다 */
+        margin-bottom: 20px !important; /* 원래 64px(4rem)이던 간격을 반으로 확 줄였습니다 */
     }
 
-    /* ----------------------------------------------------------------- */
-    /* 아래부터는 형준님이 직접 튜닝하신 완벽한 코드 원본 그대로입니다! */
-    /* ----------------------------------------------------------------- */
 
     /* 2. 라이트박스(상세보기) 전체 영역 설정 */
     #lightbox, .lightbox {
@@ -44,13 +41,14 @@
 
     /* 3. 상세 내용 박스 (폭 제한 및 가시성 확보) */
     .lightbox-content {
-        max-width: 500px !important; /* 문장 폭 줄이기 */
-        width: 70% !important;
-        margin: 80px auto !important;
+        max-width: 500px !important; /* 형준님 튜닝 수치 유지 */
+        width: 70% !important; /* 형준님 튜닝 수치 유지 */
+        /* 🔥 [수정됨] margin 상단을 80px에서 20px로 줄여서 위로 확 끌어올림 */
+        margin: 20px auto 80px auto !important; 
         background: white !important;
-        padding: 50px !important;
+        padding: 50px !important; /* 형준님 튜닝 수치 유지 */
         display: block !important; /* 내용 강제 노출 */
-        opacity: 1 !important;
+        opacity: 1 !important; /* CSS 최대치인 1로 교정 */
         position: relative !important;
     }
 
@@ -64,18 +62,24 @@
         box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
 
-    .lightbox-caption {
+    /* 🔥 [수정됨] 완벽한 왼쪽 정렬 및 가독성 확보 (오른쪽 붙임 현상 해결) */
+    .lightbox-caption, #lightboxDescription, .lightbox-caption p {
         text-align: left !important;
-    }
-
-    #lightboxTitle, #lightboxDescription, .lightbox-caption h3, .lightbox-caption p {
         color: #1a1a1a !important; /* 진한 검정색 */
         line-height: 1.8 !important;
         text-shadow: none !important;
         display: block !important;
+        width: 100% !important; /* 텍스트가 오른쪽으로 뭉치지 않게 꽉 채움 */
     }
 
-    /* 5. 이전/다음 버튼 - 상세 내용 하단 중앙에 배치 */
+    #lightboxTitle, .lightbox-caption h3 {
+        text-align: left !important;
+        color: #000000 !important;
+        font-weight: 700 !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* 5. 이전/다음 버튼 - 상세 내용 하단 중앙에 배치 (형준님 튜닝 수치 유지) */
     .lightbox-prev, .lightbox-next {
         position: fixed !important; /* 화면 하단에 고정 */
         bottom: 30px !important;
