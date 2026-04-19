@@ -5,59 +5,69 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="js/firebase-adapter.js"></script>
 <style>
-    /* 1. 기본 배경 및 여백 설정 */
+    /* 1. 기본 배경 및 상단 여백 (제목 짤림 방지) */
     body {
         background-color: #ffffff !important;
-        padding-top: 80px !important;
+        padding-top: 100px !important;
     }
 
-    /* 2. 라이트박스(상세보기) 배경 - 흰색 반투명 */
-    .lightbox {
+    /* 2. 라이트박스(상세보기) 전체 영역 설정 */
+    #lightbox, .lightbox {
         background-color: rgba(255, 255, 255, 0.98) !important;
+        z-index: 9999 !important;
+        display: none; /* 기본은 숨김 (스크립트가 작동함) */
+        position: fixed !important;
+        top: 0; left: 0; width: 100%; height: 100%;
+    }
+
+    /* 활성화되었을 때만 보임 */
+    #lightbox.active, .lightbox.active {
         display: flex !important;
+        flex-direction: column !important;
         align-items: center !important;
-        justify-content: center !important;
+        justify-content: flex-start !important;
+        overflow-y: auto !important; /* 내용이 길면 스크롤 가능하게 */
     }
 
-    /* 3. 상세 내용 폭 제한 (좌우 줄이기) */
+    /* 3. 상세 내용 박스 (폭 제한 및 가시성 확보) */
     .lightbox-content {
-        max-width: 750px !important; /* 형준님이 원하시는 슬림한 폭 */
+        max-width: 800px !important; /* 문장 폭 줄이기 */
         width: 90% !important;
-        margin: 0 auto !important;
-        background: transparent !important;
+        margin: 60px auto !important;
+        background: white !important;
+        padding: 20px !important;
+        display: block !important; /* 내용 강제 노출 */
+        opacity: 1 !important;
         position: relative !important;
-        padding-bottom: 120px !important; /* 하단 버튼이 들어갈 공간 확보 */
     }
 
-    /* 4. 이미지 및 텍스트 가독성 (진한 검정색) */
+    /* 4. 이미지 및 텍스트 색상 (까마귀 탈출) */
     #lightboxImage {
         max-width: 100% !important;
         height: auto !important;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        border: 1px solid #eee;
+        display: block !important;
+        margin: 0 auto 30px auto !important;
+        border-radius: 8px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
 
     .lightbox-caption {
-        padding: 30px 0 !important;
-    }
-
-    #lightboxTitle, 
-    #lightboxDescription {
-        color: #1a1a1a !important; /* 어둠 속의 까마귀 탈출! */
-        text-shadow: none !important;
-        line-height: 1.8 !important;
         text-align: left !important;
     }
 
-    /* 5. 이전/다음 버튼 - 하단 중앙으로 이동 및 세련된 디자인 */
-    .lightbox-prev, 
-    .lightbox-next {
-        position: absolute !important; /* 상단 구석에서 탈출! */
-        top: auto !important;
-        bottom: 30px !important; /* 내용 바로 아래 배치 */
-        width: 50px !important;
-        height: 50px !important;
+    #lightboxTitle, #lightboxDescription, .lightbox-caption h3, .lightbox-caption p {
+        color: #1a1a1a !important; /* 진한 검정색 */
+        line-height: 1.8 !important;
+        text-shadow: none !important;
+        display: block !important;
+    }
+
+    /* 5. 이전/다음 버튼 - 상세 내용 하단 중앙에 배치 */
+    .lightbox-prev, .lightbox-next {
+        position: fixed !important; /* 화면 하단에 고정 */
+        bottom: 50px !important;
+        width: 60px !important;
+        height: 60px !important;
         background: #1a1a1a !important; /* 세련된 블랙 버튼 */
         color: #ffffff !important;
         border-radius: 50% !important;
@@ -65,33 +75,29 @@
         align-items: center !important;
         justify-content: center !important;
         border: none !important;
+        font-size: 24px !important;
         cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        font-size: 20px !important;
-        z-index: 1001 !important;
+        z-index: 10000 !important;
+        transition: transform 0.2s ease;
     }
 
-    /* 버튼 위치 잡기 (중앙 기준 좌우 배치) */
-    .lightbox-prev {
-        left: calc(50% - 60px) !important;
-    }
-    .lightbox-next {
-        right: calc(50% - 60px) !important;
+    /* 버튼 좌우 간격 (가운데로 모으기) */
+    .lightbox-prev { left: calc(50% - 80px) !important; }
+    .lightbox-next { left: calc(50% + 20px) !important; }
+
+    .lightbox-prev:hover, .lightbox-next:hover {
+        transform: scale(1.1);
+        background: #d4a574 !important; /* 포인트 컬러 */
     }
 
-    .lightbox-prev:hover, 
-    .lightbox-next:hover {
-        background: #d4a574 !important; /* 형준님의 시그니처 골드 컬러 */
-        transform: translateY(-3px);
-    }
-
-    /* 닫기 버튼은 우측 상단에 깔끔하게 배치 */
+    /* 닫기 버튼 스타일 */
     .lightbox-close {
-        color: #1a1a1a !important;
-        font-size: 40px !important;
-        top: 20px !important;
+        position: fixed !important;
+        top: 30px !important;
         right: 30px !important;
-        opacity: 0.6;
+        color: #333 !important;
+        font-size: 40px !important;
+        z-index: 10001 !important;
     }
 </style>
 <head>
