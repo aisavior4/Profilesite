@@ -399,7 +399,7 @@
         async function loadResumeData() {
             try {
                 console.log('📥 Loading resume data...');
-                const response = await fetch('tables/resume?limit=200&sort=order');
+                const response = await fetch('tables/resume?limit=200&sort=order&t=' + new Date().getTime());
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
