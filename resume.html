@@ -141,7 +141,7 @@
             display: flex;
             align-items: baseline;
             gap: 12px;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
         }
 
         /* 학력 카테고리는 무조건 한 줄로 */
@@ -154,13 +154,13 @@
             font-size: 15px;
             font-weight: 600;
             color: #1a1a1a;
-            flex-shrink: 0;
+            word-break: keep-all;
         }
 
         .item-subtitle {
             font-size: 14px;
             color: #555;
-            flex-shrink: 0;
+            word-break: keep-all;
         }
 
         .item-date {
