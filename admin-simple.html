@@ -856,7 +856,7 @@
                 <label>카테고리 *</label>
                 <select id="pubCategory">
                     <option value="">선택하세요</option>
-                    <option value="thesis">논문 & 전문서적</option>
+                    <option value="paper">논문 & 전문서적</option>
                     <option value="article">기사 & 미디어</option>
                     <option value="other">기타</option>
                 </select>
@@ -1030,7 +1030,7 @@
                     <option value="certification">국제공인 자격증</option>
                     <option value="experience">사회경력</option>
                     <option value="book">저서</option>
-                    <option value="thesis">논문</option>
+                    <option value="paper">논문</option>
                     <option value="project">주요 정부사업 및 프로젝트</option>
                     <option value="workshop">음향과정 교육 워크샵</option>
                     <option value="lecture">그 외 특강</option>
@@ -2039,7 +2039,7 @@
         async function loadResumeItems() {
             log('Loading resume items...');
             try {
-                const response = await fetch('tables/resume?limit=200&sort=order');
+                const response = await fetch('tables/resume?limit=200&sort=order&t=' + new Date().getTime());
                 const data = await response.json();
 
                 allResumeItems = data.data || [];
