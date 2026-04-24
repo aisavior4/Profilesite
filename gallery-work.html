@@ -8,47 +8,62 @@
     /* 🔥 1. 제목 위쪽의 쓸데없는 여백 줄이기 (사진의 'X' 부분 해결) */
     body {
         background-color: #ffffff !important;
-        padding-top: 80px !important; /* 네비게이션 바 높이만 남기고 확 줄였습니다 */
+        padding-top: 80px !important;
+        /* 네비게이션 바 높이만 남기고 확 줄였습니다 */
     }
 
     section {
-        padding-top: 10px !important; /* 템플릿 기본값인 거대한 상단 여백 제거 */
+        padding-top: 10px !important;
+        /* 템플릿 기본값인 거대한 상단 여백 제거 */
     }
 
     /* 🔥 2. 제목과 아래 사진들 사이의 거대 여백 줄이기 (사진의 'O' 부분 해결) */
     .section-header {
-        margin-bottom: 20px !important; /* 원래 64px(4rem)이던 간격을 반으로 확 줄였습니다 */
+        margin-bottom: 20px !important;
+        /* 원래 64px(4rem)이던 간격을 반으로 확 줄였습니다 */
     }
 
 
     /* 2. 라이트박스(상세보기) 전체 영역 설정 */
-    #lightbox, .lightbox {
+    #lightbox,
+    .lightbox {
         background-color: rgba(255, 255, 255, 0.98) !important;
         z-index: 9999 !important;
-        display: none; /* 기본은 숨김 (스크립트가 작동함) */
+        display: none;
+        /* 기본은 숨김 (스크립트가 작동함) */
         position: fixed !important;
-        top: 0; left: 0; width: 100%; height: 100%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
 
     /* 활성화되었을 때만 보임 */
-    #lightbox.active, .lightbox.active {
+    #lightbox.active,
+    .lightbox.active {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: flex-start !important;
-        overflow-y: auto !important; /* 내용이 길면 스크롤 가능하게 */
+        overflow-y: auto !important;
+        /* 내용이 길면 스크롤 가능하게 */
     }
 
     /* 3. 상세 내용 박스 (폭 제한 및 가시성 확보) */
     .lightbox-content {
-        max-width: 500px !important; /* 형준님 튜닝 수치 유지 */
-        width: 70% !important; /* 형준님 튜닝 수치 유지 */
+        max-width: 500px !important;
+        /* 형준님 튜닝 수치 유지 */
+        width: 70% !important;
+        /* 형준님 튜닝 수치 유지 */
         /* 🔥 [수정됨] margin 상단을 80px에서 20px로 줄여서 위로 확 끌어올림 */
-        margin: 20px auto 80px auto !important; 
+        margin: 20px auto 80px auto !important;
         background: white !important;
-        padding: 50px !important; /* 형준님 튜닝 수치 유지 */
-        display: block !important; /* 내용 강제 노출 */
-        opacity: 1 !important; /* CSS 최대치인 1로 교정 */
+        padding: 50px !important;
+        /* 형준님 튜닝 수치 유지 */
+        display: block !important;
+        /* 내용 강제 노출 */
+        opacity: 1 !important;
+        /* CSS 최대치인 1로 교정 */
         position: relative !important;
     }
 
@@ -59,20 +74,25 @@
         display: block !important;
         margin: 0 auto 30px auto !important;
         border-radius: 8px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     }
 
     /* 🔥 [수정됨] 완벽한 왼쪽 정렬 및 가독성 확보 (오른쪽 붙임 현상 해결) */
-    .lightbox-caption, #lightboxDescription, .lightbox-caption p {
+    .lightbox-caption,
+    #lightboxDescription,
+    .lightbox-caption p {
         text-align: left !important;
-        color: #1a1a1a !important; /* 진한 검정색 */
+        color: #1a1a1a !important;
+        /* 진한 검정색 */
         line-height: 1.8 !important;
         text-shadow: none !important;
         display: block !important;
-        width: 100% !important; /* 텍스트가 오른쪽으로 뭉치지 않게 꽉 채움 */
+        width: 100% !important;
+        /* 텍스트가 오른쪽으로 뭉치지 않게 꽉 채움 */
     }
 
-    #lightboxTitle, .lightbox-caption h3 {
+    #lightboxTitle,
+    .lightbox-caption h3 {
         text-align: left !important;
         color: #000000 !important;
         font-weight: 700 !important;
@@ -80,12 +100,15 @@
     }
 
     /* 5. 이전/다음 버튼 - 상세 내용 하단 중앙에 배치 (형준님 튜닝 수치 유지) */
-    .lightbox-prev, .lightbox-next {
-        position: fixed !important; /* 화면 하단에 고정 */
+    .lightbox-prev,
+    .lightbox-next {
+        position: fixed !important;
+        /* 화면 하단에 고정 */
         bottom: 30px !important;
         width: 30px !important;
         height: 30px !important;
-        background: #1a1a1a !important; /* 세련된 블랙 버튼 */
+        background: #1a1a1a !important;
+        /* 세련된 블랙 버튼 */
         color: #ffffff !important;
         border-radius: 50% !important;
         display: flex !important;
@@ -99,12 +122,19 @@
     }
 
     /* 버튼 좌우 간격 (가운데로 모으기) */
-    .lightbox-prev { left: calc(50% - 80px) !important; }
-    .lightbox-next { left: calc(50% + 20px) !important; }
+    .lightbox-prev {
+        left: calc(50% - 80px) !important;
+    }
 
-    .lightbox-prev:hover, .lightbox-next:hover {
+    .lightbox-next {
+        left: calc(50% + 20px) !important;
+    }
+
+    .lightbox-prev:hover,
+    .lightbox-next:hover {
         transform: scale(1.1);
-        background: #d4a574 !important; /* 포인트 컬러 */
+        background: #d4a574 !important;
+        /* 포인트 컬러 */
     }
 
     /* 닫기 버튼 스타일 */
@@ -117,15 +147,19 @@
         z-index: 10001 !important;
     }
 </style>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work & People Gallery - 임형준</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:wght@400;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:wght@400;700&family=Noto+Serif+KR:wght@400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="nav">
@@ -149,7 +183,8 @@
             <a href="index.html#gallery" class="back-link">
                 <i class="fas fa-arrow-left"></i> Back to Gallery
             </a>
-            <h1 class="page-title" data-aos="fade-up">Work & People Gallery</h1><p class="page-subtitle" data-aos="fade-up" data-aos-delay="100">일과 사람들</p>
+            <h1 class="page-title" data-aos="fade-up">Work & People Gallery</h1>
+            <p class="page-subtitle" data-aos="fade-up" data-aos-delay="100">일과 사람들</p>
             <p class="page-subtitle" data-aos="fade-up" data-aos-delay="100">작업 현장 & 프로젝트</p>
         </div>
     </section>
@@ -175,9 +210,27 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 임형준 Sound Engineer & Producer, Educator. All rights reserved.</p>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>임형준</h3>
+                    <p>Sound Engineer & Producer, Educator</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/rainlander" target="_blank"><i
+                                class="fab fa-facebook"></i></a>
+                        <a href="mailto:soundsavior4@gmail.com"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="footer-copyright">
+                    <p>&copy; <span id="year"></span> 임형준. All rights reserved.</p>
+                    <p>Designed & Developed with <br /> Jun, 뮤즈, 아루, 제니, 퍼즈, V3D</i></p>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -192,7 +245,7 @@
             try {
                 const response = await fetch('tables/gallery?limit=100&sort=order');
                 const data = await response.json();
-                
+
                 const workItems = data.data.filter(item => item.category === 'work');
                 renderGallery(workItems);
             } catch (error) {
@@ -209,7 +262,7 @@
                 card.className = 'gallery-item';
                 card.setAttribute('data-aos', 'fade-up');
                 card.setAttribute('data-aos-delay', (index % 6) * 50);
-                
+
                 card.innerHTML = `
                     <img src="${item.image_url}" alt="${item.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%232c2c2c%22 width=%22400%22 height=%22300%22/%3E%3Ctext fill=%22%23d4a574%22 font-size=%2220%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3E${item.title}%3C/text%3E%3C/svg%3E'">
                     <div class="gallery-overlay">
@@ -219,7 +272,7 @@
                         </div>
                     </div>
                 `;
-                
+
                 card.onclick = () => openLightbox(item.image_url, item.title, item.description, index, items);
                 grid.appendChild(card);
             });
@@ -232,11 +285,11 @@
         function openLightbox(src, title, description, index, images) {
             currentImageIndex = index;
             currentImages = images;
-            
+
             const lightbox = document.getElementById('lightbox');
             const img = document.getElementById('lightbox-img');
             const caption = document.getElementById('lightbox-caption');
-            
+
             img.src = src;
             caption.innerHTML = `<h3>${title}</h3><p>${description}</p>`;
             lightbox.style.display = 'flex';
@@ -252,7 +305,7 @@
             currentImageIndex += direction;
             if (currentImageIndex < 0) currentImageIndex = currentImages.length - 1;
             if (currentImageIndex >= currentImages.length) currentImageIndex = 0;
-            
+
             const item = currentImages[currentImageIndex];
             document.getElementById('lightbox-img').src = item.image_url;
             document.getElementById('lightbox-caption').innerHTML = `<h3>${item.title}</h3><p>${item.description}</p>`;
@@ -261,7 +314,7 @@
         document.querySelector('.lightbox-close').onclick = closeLightbox;
         document.getElementById('lightbox-prev').onclick = () => navigateLightbox(-1);
         document.getElementById('lightbox-next').onclick = () => navigateLightbox(1);
-        
+
         document.getElementById('lightbox').onclick = (e) => {
             if (e.target.id === 'lightbox') closeLightbox();
         };
@@ -270,4 +323,5 @@
         loadWorkGallery();
     </script>
 </body>
+
 </html>
