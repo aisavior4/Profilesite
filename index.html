@@ -641,14 +641,117 @@
             <div class="section-header" data-aos="fade-up">
                 <h2 class="section-title">Board</h2>
                 <div class="title-divider"></div>
-                <p class="section-subtitle">공지사항 & 게시글</p>
+                <p class="section-subtitle">최신 공지사항 & 게시글</p>
             </div>
-            <div style="text-align: center; padding: 40px 0;" data-aos="fade-up">
+
+            <style>
+                .recent-posts-list {
+                    max-width: 700px;
+                    /* PC에서 보기 좋게 폭을 조금 넓혔습니다 */
+                    margin: 0 auto 30px auto;
+                    text-align: left;
+                    background: white;
+                    border-radius: 12px;
+                    padding: 10px 20px;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                    /* 예쁜 그림자 효과 */
+                }
+
+                .recent-post-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 18px 10px;
+                    border-bottom: 1px solid #eee;
+                    transition: all 0.3s;
+                    text-decoration: none;
+                }
+
+                .recent-post-item:last-child {
+                    border-bottom: none;
+                }
+
+                .recent-post-item:hover {
+                    padding-left: 15px;
+                    /* 마우스 올리면 살짝 들어가는 고급 효과 */
+                    background: #fafafa;
+                }
+
+                .recent-post-title {
+                    color: #1a1a1a;
+                    font-weight: 500;
+                    font-size: 16px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    flex: 1;
+                }
+
+                .recent-post-date {
+                    color: #d4a574;
+                    /* 형준님의 시그니처 골드 컬러 */
+                    font-size: 13px;
+                    margin-left: 20px;
+                    white-space: nowrap;
+                    font-weight: 500;
+                }
+            </style>
+
+            <div id="board-preview" class="board-preview-container" data-aos="fade-up" data-aos-delay="100">
+                <div id="recent-posts-list" class="recent-posts-list">
+                    <p style="color: #999; text-align: center; padding: 20px 0;">최신 소식을 불러오는 중입니다...</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; padding-bottom: 20px;" data-aos="fade-up" data-aos-delay="200">
                 <a href="board.html" class="btn btn-primary"
-                    style="display: inline-block; padding: 12px 32px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
-                    <i class="fas fa-list"></i> 게시판 보기
+                    style="display: inline-block; padding: 12px 32px; background: var(--accent-color, #d4a574); color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">
+                    <i class="fas fa-list"></i> 전체 게시글 보기
                 </a>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', async () => {
+                    try {
+                        // 딱 3개만, 최신순으로 가져옵니다!
+                        const response = await fetch('tables/board?limit=3&sort=created_at');
+                        const data = await response.json();
+                        const posts = data.data || [];
+                        const container = document.getElementById('recent-posts-list');
+
+                        if (posts.length === 0) {
+                            container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px 0;">등록된 게시글이 없습니다.</p>';
+                            return;
+                        }
+
+                        container.innerHTML = posts.map(post => {
+                            // 철벽 방어 날짜 포맷팅
+                            const date = new Date(post.created_at);
+                            let displayDate = "";
+                            if (isNaN(date.getTime())) {
+                                const d = new Date();
+                                displayDate = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+                            } else {
+                                displayDate = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+                            }
+
+                            // 예쁜 리스트 형태로 출력
+                            return `
+                                <a href="board.html" class="recent-post-item">
+                                    <span class="recent-post-title">
+                                        <i class="fas fa-caret-right" style="margin-right: 10px; color: #d4a574;"></i>
+                                        ${post.title}
+                                    </span>
+                                    <span class="recent-post-date">updated ${displayDate}</span>
+                                </a>
+                            `;
+                        }).join('');
+                    } catch (error) {
+                        console.error('미리보기 로드 실패:', error);
+                        document.getElementById('recent-posts-list').innerHTML = '<p style="color: #999; text-align: center; padding: 20px 0;">게시글을 불러올 수 없습니다.</p>';
+                    }
+                });
+            </script>
         </div>
     </section>
 
