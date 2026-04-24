@@ -4,19 +4,25 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="js/firebase-adapter.js"></script>
-        /* 1. 기본 배경 및 상단 여백 (제목 짤림 방지) */
+<style>
+    /* 1. 위쪽 빨간 화살표: 네비게이션 바와 'Board' 제목 사이 여백 줄이기 */
     body {
-        background-color: #ffffff !important;
-        padding-top: 0px !important;
+        padding-top: 80px !important; /* 네비게이션 높이 정도만 남깁니다 */
+    }
+    section {
+        padding-top: 30px !important; /* 템플릿 기본 거대 여백(96px)을 30px로 확 줄임 */
     }
 
-section {
-        padding-top: 0px !important; /* 템플릿 기본값인 거대한 상단 여백 제거 */
-}
-
+    /* 2. 아래쪽 빨간 화살표: 제목(공지사항&게시글)과 흰색 게시물 박스 사이 여백 줄이기 */
     .section-header {
-        margin-bottom: 0px !important; /* 원래 64px(4rem)이던 간격을 반으로 확 줄였습니다 */
+        margin-bottom: 20px !important; /* 기본 64px이던 간격을 20px로 대폭 축소 */
     }
+
+    /* (보너스) 게시물 박스 자체의 여백도 당겨줍니다 */
+    .board-container, .board-wrap {
+        margin-top: 0 !important;
+    }
+</style>
         
 <head>
     <meta charset="UTF-8">
