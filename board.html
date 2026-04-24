@@ -23,28 +23,11 @@
     .board-container,
     .board-wrap {
         margin-top: 0 !important;
-        min-height: 30vh !important;
+        min-height: 50vh !important;
         /* 화면 높이의 절반 정도를 떡하니 차지해서 푸터를 바닥으로 쫓아냅니다 */
     }
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // 파이어베이스 데이터가 로딩되는 시간을 고려해 0.5초마다 감시해서 교체합니다!
-        setInterval(() => {
-            document.querySelectorAll('span, div, p').forEach(el => {
-                if (el.innerHTML.includes('NaN.NaN.NaN')) {
-                    // 오늘 날짜로 아주 예쁘고 자연스럽게 둔갑시킵니다.
-                    const d = new Date();
-                    const cleanDate = d.getFullYear() + '.' +
-                        String(d.getMonth() + 1).padStart(2, '0') + '.' +
-                        String(d.getDate()).padStart(2, '0');
-                    el.innerHTML = el.innerHTML.replace('NaN.NaN.NaN', cleanDate);
-                }
-            });
-        }, 500);
-    });
-</script>
 
 <head>
     <meta charset="UTF-8">
@@ -471,6 +454,15 @@
 
         function formatDate(timestamp) {
             const date = new Date(timestamp);
+
+            // 🔥 데이터가 이상해서 외계어(NaN)가 뜰 것 같으면 오늘 날짜로 강제 방어!
+            if (isNaN(date.getTime())) {
+                const d = new Date();
+                return d.getFullYear() + '.' +
+                    String(d.getMonth() + 1).padStart(2, '0') + '.' +
+                    String(d.getDate()).padStart(2, '0');
+            }
+
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
