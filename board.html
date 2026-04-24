@@ -5,26 +5,28 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="js/firebase-adapter.js"></script>
 <style>
-    /* 1. 네비게이션 바와 'Board' 제목 사이 여백 */
+    /* 1. 상단 네비게이션과 'Board' 제목 사이를 살짝 더 벌립니다 */
     body {
-        padding-top: 80px !important;
+        padding-top: 100px !important;
     }
 
     section {
-        padding-top: 20px !important;
+        padding-top: 30px !important;
     }
 
-    /* 2. 제목(공지사항&게시글)과 흰색 게시물 박스 사이 여백 줄이기 */
+    /* 2. 제목(공지사항&게시글)과 하얀색 게시물 박스 사이 여백 */
     .section-header {
-        margin-bottom: 20px !important;
+        margin-bottom: 30px !important;
     }
 
-    /* 🔥 [태평양 해결!] 푸터를 밀어내는 역할을 전체 구역이 아닌 '게시판 박스'에 넘깁니다 */
-    .board-container,
-    .board-wrap {
+    /* 3. 🔥 [진짜 푸터 밀어내기!] 게시글 박스와 하단 푸터 사이를 쫙 벌립니다 */
+    .board-list,
+    .board-detail {
         margin-top: 0 !important;
-        min-height: 50vh !important;
-        /* 화면 높이의 절반 정도를 떡하니 차지해서 푸터를 바닥으로 쫓아냅니다 */
+        margin-bottom: 100px !important;
+        /* 푸터와의 간격을 태평양처럼 넓게 벌림! */
+        min-height: 55vh !important;
+        /* 글이 1개뿐이어도 화면의 55%를 강제로 차지해서 푸터를 바닥에 처박음! */
     }
 </style>
 
