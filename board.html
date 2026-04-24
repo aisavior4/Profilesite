@@ -5,24 +5,26 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="js/firebase-adapter.js"></script>
 <style>
-/* 1. 네비게이션 바와 'Board' 제목 사이 여백 */
-    body { 
-        padding-top: 80px !important; 
+    /* 1. 네비게이션 바와 'Board' 제목 사이 여백 */
+    body {
+        padding-top: 80px !important;
     }
-    
-    section { 
-        padding-top: 10px !important; 
+
+    section {
+        padding-top: 10px !important;
     }
 
     /* 2. 제목(공지사항&게시글)과 흰색 게시물 박스 사이 여백 줄이기 */
-    .section-header { 
-        margin-bottom: 20px !important; 
+    .section-header {
+        margin-bottom: 20px !important;
     }
 
     /* 🔥 [태평양 해결!] 푸터를 밀어내는 역할을 전체 구역이 아닌 '게시판 박스'에 넘깁니다 */
-    .board-container, .board-wrap {
+    .board-container,
+    .board-wrap {
         margin-top: 0 !important;
-        min-height: 50vh !important; /* 화면 높이의 절반 정도를 떡하니 차지해서 푸터를 바닥으로 쫓아냅니다 */
+        min-height: 60vh !important;
+        /* 화면 높이의 절반 정도를 떡하니 차지해서 푸터를 바닥으로 쫓아냅니다 */
     }
 </style>
 
@@ -31,18 +33,18 @@
         // 파이어베이스 데이터가 로딩되는 시간을 고려해 0.5초마다 감시해서 교체합니다!
         setInterval(() => {
             document.querySelectorAll('span, div, p').forEach(el => {
-                if(el.innerHTML.includes('NaN.NaN.NaN')) {
+                if (el.innerHTML.includes('NaN.NaN.NaN')) {
                     // 오늘 날짜로 아주 예쁘고 자연스럽게 둔갑시킵니다.
                     const d = new Date();
-                    const cleanDate = d.getFullYear() + '.' + 
-                                     String(d.getMonth() + 1).padStart(2, '0') + '.' + 
-                                     String(d.getDate()).padStart(2, '0');
+                    const cleanDate = d.getFullYear() + '.' +
+                        String(d.getMonth() + 1).padStart(2, '0') + '.' +
+                        String(d.getDate()).padStart(2, '0');
                     el.innerHTML = el.innerHTML.replace('NaN.NaN.NaN', cleanDate);
                 }
             });
         }, 500);
     });
-</script>    
+</script>
 
 <head>
     <meta charset="UTF-8">
@@ -51,14 +53,16 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/gallery-categories.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:wght@400;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:wght@400;700&family=Noto+Serif+KR:wght@400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <style>
         .board-list {
             background: white;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
         }
 
         .board-item {
@@ -139,7 +143,7 @@
             background: white;
             border-radius: 12px;
             padding: 40px;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
         }
 
         .board-detail-header {
@@ -209,23 +213,37 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <a href="index.html" style="color: white; font-size: 20px; text-decoration: none; display: block; padding: 10px 0;">
+        <div
+            style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <a href="index.html"
+                style="color: white; font-size: 20px; text-decoration: none; display: block; padding: 10px 0;">
                 <i class="fas fa-home"></i>
             </a>
-            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; flex: 1; padding-left: 20px;">
-                <a href="index.html#home" style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Home</a>
-                <a href="index.html#about" style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">About</a>
-                <a href="index.html#expertise" style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Expertise</a>
-                <a href="index.html#gallery" style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Gallery</a>
-                <a href="index.html#publications" style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Publications</a>
-                <a href="resume.html" style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Resume</a>
-                <a href="board.html" style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap; border-bottom: 2px solid #d4a574;">Board</a>
-                <a href="index.html#contact" style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Contact</a>
-                <a href="admin-simple.html" style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;"><i class="fas fa-cog"></i> Admin</a>
+            <div
+                style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; flex: 1; padding-left: 20px;">
+                <a href="index.html#home"
+                    style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Home</a>
+                <a href="index.html#about"
+                    style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">About</a>
+                <a href="index.html#expertise"
+                    style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Expertise</a>
+                <a href="index.html#gallery"
+                    style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Gallery</a>
+                <a href="index.html#publications"
+                    style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Publications</a>
+                <a href="resume.html"
+                    style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Resume</a>
+                <a href="board.html"
+                    style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap; border-bottom: 2px solid #d4a574;">Board</a>
+                <a href="index.html#contact"
+                    style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;">Contact</a>
+                <a href="admin-simple.html"
+                    style="color: white; font-size: 12px; text-decoration: none; white-space: nowrap;"><i
+                        class="fas fa-cog"></i> Admin</a>
             </div>
         </div>
     </nav>
@@ -278,15 +296,15 @@
             try {
                 console.log('📥 Loading board posts...');
                 const response = await fetch('tables/board?limit=100&sort=created_at');
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
-                
+
                 const data = await response.json();
                 console.log('✅ Board data received:', data);
                 console.log(`📊 Total posts: ${data.data?.length || 0}`);
-                
+
                 if (data.data && data.data.length > 0) {
                     console.log('🔍 First post sample:', {
                         title: data.data[0].title,
@@ -294,7 +312,7 @@
                         has_image: !!data.data[0].image_url
                     });
                 }
-                
+
                 currentPosts = data.data || [];
                 renderBoardList(currentPosts);
             } catch (error) {
@@ -325,7 +343,7 @@
                 item.className = 'board-item' + (post.is_pinned ? ' pinned' : '');
                 item.setAttribute('data-aos', 'fade-up');
                 item.setAttribute('data-aos-delay', (index % 10) * 50);
-                
+
                 item.innerHTML = `
                     ${post.image_url ? `
                     <div class="board-item-thumbnail" style="width: 100px; height: 100px; margin-right: 20px; flex-shrink: 0;">
@@ -348,7 +366,7 @@
                         </div>
                     </div>
                 `;
-                
+
                 item.onclick = () => showBoardDetail(post);
                 boardList.appendChild(item);
             });
@@ -363,17 +381,17 @@
             console.log('🔑 Post ID:', post.id);
             console.log('📌 Post Title:', post.title);
             console.log('========================================');
-            
+
             // CRITICAL: Check if content exists
             if (!post.content || post.content.trim() === '') {
                 alert('⚠️ 경고: 게시글 본문이 비어있습니다!\n\n해결 방법:\n1. admin-simple.html 접속\n2. "게시판" 탭 클릭\n3. 해당 게시글 "수정" 버튼 클릭\n4. "내용" 필드에 본문 작성\n5. "저장" 클릭');
             }
-            
+
             // Increment view count
             incrementViewCount(post.id);
 
             const detail = document.getElementById('boardDetail');
-            
+
             // Prepare content with better handling
             let contentHTML = '';
             if (post.content && post.content.trim() !== '') {
@@ -382,7 +400,7 @@
                     contentHTML = post.content;
                 } else {
                     // Plain text - convert newlines to <br> and wrap in paragraphs
-                    contentHTML = post.content.split('\n').map(para => 
+                    contentHTML = post.content.split('\n').map(para =>
                         para.trim() ? `<p>${para.replace(/\n/g, '<br>')}</p>` : ''
                     ).join('');
                 }
@@ -400,7 +418,7 @@
                     </div>
                 `;
             }
-            
+
             detail.innerHTML = `
                 <div class="board-detail-header">
                     <h1 class="board-detail-title">${post.title}</h1>
@@ -440,7 +458,7 @@
                 if (post) {
                     await fetch(`tables/board/${postId}`, {
                         method: 'PATCH',
-                        headers: {'Content-Type': 'application/json'},
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             views: (post.views || 0) + 1
                         })
@@ -463,4 +481,5 @@
         loadBoardPosts();
     </script>
 </body>
+
 </html>
