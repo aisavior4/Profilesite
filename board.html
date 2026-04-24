@@ -7,12 +7,19 @@
 <style>
     /* 1. 위쪽 빨간 화살표: 네비게이션 바와 'Board' 제목 사이 여백 줄이기 */
     body {
-        padding-top: 40px !important; /* 네비게이션 높이 정도만 남깁니다 */
+        padding-top: 60px !important; /* 네비게이션 높이 정도만 남깁니다 */
     }
     section {
         padding-top: 10px !important; /* 템플릿 기본 거대 여백(96px)을 30px로 확 줄임 */
     }
-
+    
+/* 🔥 [추가됨] 푸터(검은색 라인) 밑으로 강제로 밀어내기 */
+    section {
+        padding-top: 30px !important; 
+        /* 게시판 구역의 최소 높이를 화면 크기(100vh)만큼 늘려서 푸터가 못 올라오게 짓누릅니다! */
+        min-height: calc(100vh - 250px) !important; 
+    }
+    
     /* 2. 아래쪽 빨간 화살표: 제목(공지사항&게시글)과 흰색 게시물 박스 사이 여백 줄이기 */
     .section-header {
         margin-bottom: 0px !important; /* 기본 64px이던 간격을 20px로 대폭 축소 */
@@ -23,6 +30,24 @@
         margin-top: 0 !important;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 파이어베이스 데이터가 로딩되는 시간을 고려해 0.5초마다 감시해서 교체합니다!
+        setInterval(() => {
+            document.querySelectorAll('span, div, p').forEach(el => {
+                if(el.innerHTML.includes('NaN.NaN.NaN')) {
+                    // 오늘 날짜로 아주 예쁘고 자연스럽게 둔갑시킵니다.
+                    const d = new Date();
+                    const cleanDate = d.getFullYear() + '.' + 
+                                     String(d.getMonth() + 1).padStart(2, '0') + '.' + 
+                                     String(d.getDate()).padStart(2, '0');
+                    el.innerHTML = el.innerHTML.replace('NaN.NaN.NaN', cleanDate);
+                }
+            });
+        }, 500);
+    });
+</script>    
         
 <head>
     <meta charset="UTF-8">
